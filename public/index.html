@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module" src="/public/index.js"></script>
+  </head>
+  <body>
+    <textarea id="graphql" type="text" name="graphql">
+      query {
+        cat {
+          name
+        }
+      }
+
+      query getPet {
+        cat {
+          owner {
+            name
+          }
+        }
+      }
+
+      query getPet {
+        cat {
+          treat
+        }
+      }
+
+      subscription sub {
+        newMessage {
+          body
+          sender
+        }
+        disallowedSecondRootField
+      }
+
+      type Query {
+        cat: Pet
+      }
+
+      type Subscription {
+        newMessage: Result
+      }
+
+      union Pet = Cat | Dog
+    </textarea>
+    <button id="uploader">Validate</button>
+    <div id="diagnostics"></div>
+  </body>
+</html>

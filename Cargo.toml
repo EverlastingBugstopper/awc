@@ -1,0 +1,36 @@
+[package]
+name = "awc"
+version = "0.1.0"
+edition = "2021"
+authors = ["Avery Harnish <averyharnish@gmail.com>"]
+default-run = "awc-cli"
+
+[[bin]]
+name = "awc"
+path = "./src/awc.rs"
+required-features = ["http"]
+
+[[bin]]
+name = "awc-cli"
+path = "./src/cli.rs"
+required-features = ["cli"]
+
+[features]
+default = ["cli", "http"]
+cli = ["clap"]
+http = ["anyhow", "async-std", "tide"]
+
+[dependencies]
+# lib dependencies
+apollo-compiler = { git = "https://github.com/apollographql/apollo-rs", rev = "4286e568bc4485b2c219daaffd5781a66d5f843c" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+miette = "4.7.1"
+
+# cli dependencies
+clap = { version = "3", features = ["std", "derive"], optional = true }
+
+# server dependencies
+anyhow = { version = "1", optional = true }
+async-std = { version = "1.6.0", features = ["attributes"], optional = true }
+tide = { version = "0.17.0-beta.1", optional = true }
