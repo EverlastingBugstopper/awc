@@ -26,4 +26,4 @@ RUN set -eux; \
 WORKDIR /app
 
 COPY --from=builder /app/awc ./awc
-CMD ["./awc"]
+CMD ["app/awc"]

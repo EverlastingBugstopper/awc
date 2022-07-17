@@ -3,7 +3,6 @@ use miette::{JSONReportHandler, Report};
 use serde_json::{json, Value};
 
 use std::borrow::Borrow;
-use std::env;
 
 pub type NewAwcResult = Result<(), AwcDiagnostic>;
 
@@ -44,8 +43,8 @@ impl AwcDiagnostic {
     }
 
     pub fn json(&self) -> Value {
-        let old_no_color = env::var_os("NO_COLOR");
-        env::set_var("NO_COLOR", "1");
+        // let old_no_color = env::var_os("NO_COLOR");
+        // env::set_var("NO_COLOR", "1");
         let handler = JSONReportHandler::new();
         let mut diagnostics: Vec<Value> = Vec::new();
         self.diagnostics.iter().for_each(|report| {
@@ -60,14 +59,12 @@ impl AwcDiagnostic {
             let obj = json.as_object_mut().unwrap();
             obj.remove_entry("filename");
             obj.remove_entry("related");
-            let pretty = format!("{:?}", report);
-            obj.insert("pretty".to_string(), Value::String(pretty));
             diagnostics.push(json);
         });
         let json = json!({"success": self.success(), "diagnostics": diagnostics});
-        if let Some(old_no_color) = old_no_color {
-            env::set_var("NO_COLOR", old_no_color);
-        }
+        // if let Some(old_no_color) = old_no_color {
+        //     env::set_var("NO_COLOR", old_no_color);
+        // }
         json
     }
 }

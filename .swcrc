@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "minify": true,
+  // "module": {
+  //   "type": "commonjs",
+  //   "strict": true,
+  //   "strictMode": true
+  // },
+  "env": {
+    "targets": {
+      "chrome": "79"
+    },
+    "mode": "entry",
+    "coreJs": "3.22"
+  },
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": false,
+      "decorators": false
+    }
+  }
+}
