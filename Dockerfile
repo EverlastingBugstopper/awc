@@ -8,7 +8,7 @@ RUN --mount=type=cache,target=/app/target \
 		--mount=type=cache,target=/usr/local/rustup \
 		set -eux; \
 		rustup install stable; \
-	 	cargo build --bin awc --no-default-features --features http --release; \
+	 	NODE_ENV="production" cargo build --bin awc --no-default-features --features http --release; \
 		objcopy --compress-debug-sections target/release/awc ./awc
 
 ################################################################################
