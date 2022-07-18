@@ -43,8 +43,6 @@ impl AwcDiagnostic {
     }
 
     pub fn json(&self) -> Value {
-        // let old_no_color = env::var_os("NO_COLOR");
-        // env::set_var("NO_COLOR", "1");
         let json_handler = JSONReportHandler::new();
         let pretty_handler = GraphicalReportHandler::new();
         let mut diagnostics: Vec<Value> = Vec::new();
@@ -71,10 +69,16 @@ impl AwcDiagnostic {
             obj.remove_entry("related");
             diagnostics.push(json);
         });
+        let success = self.success();
+        let pretty = if success {
+            "🎉 Your GraphQL is looking great!".to_string()
+        } else {
+            pretty.join(" ").to_string()
+        };
         json!({
-            "success": self.success(),
+            "success": success,
             "diagnostics": diagnostics,
-            "pretty": pretty.join(" ")
+            "pretty": pretty
         })
     }
 }

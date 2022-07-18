@@ -5,7 +5,8 @@ This crate powers [awc.fly.dev](https://awc.fly.dev).
 ## Development
 
 1) Install [`rustup`](https://rustup.rs)
-1) Install [`volta`](https://volta.sh);;
+1) Install [`cargo-watch`](https://crates.io/crates/cargo-watch)
+1) Install [`volta`](https://volta.sh)
 1) From the root of the repo, run `npm i; npm run dev`
 1) Navigate to [http://localhost:8080](http://localhost:8080)
 

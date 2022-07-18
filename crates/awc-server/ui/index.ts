@@ -17,7 +17,6 @@ class GraphQLValidator {
   async validate() {
     const graphql = this.input.handle.value.toString();
     const graphqlLines = graphql.split("\n");
-    console.log("validating");
     const output = await fetch('/', {
       method: "POST",
       body: graphql
@@ -79,7 +78,6 @@ class GraphQLValidator {
             let maybeLine = ""
             if (labelOffset > 0 || lastLine) {
               maybeLine += `<br/><span class="secondary-content">${SPACE}${lineIdx}${SPACE}|</span><span class="primary-content">${SPACE}${SPACE}`;
-              console.log(`graphqlLine: ${graphqlLine}`)
               for (let i = 0; i < graphqlLine.length; i++) {
                 maybeLine += graphqlLine.charAt(i)
                 labelOffset -= 1
@@ -89,9 +87,6 @@ class GraphQLValidator {
               }
               maybeLine += "</span>"
             }
-            console.log(`labelOffset: ${labelOffset}`)
-            console.log(`maybeLine: ${maybeLine}`)
-            console.log(`highlightSpace: ${maybeHighlightSpace}`)
             inline.push({maybeLine, maybeLineIdx: lineIdx, maybeHighlightSpace});
             if (labelOffset <= 0 && !lastLine) {
               lastLine = true
@@ -102,7 +97,6 @@ class GraphQLValidator {
 
           let realHighlightSpace = "";
           for (const maybeInline of inline.slice(-4)) {
-            console.log(`maybeInline: ${JSON.stringify(maybeInline)}`)
             if (maybeInline) {
               const { maybeLineIdx, maybeHighlightSpace, maybeLine } = maybeInline
               inner += maybeLine
@@ -136,7 +130,7 @@ class GraphQLValidator {
       }
       this.output.handle.innerHTML = pretties.join("");
     } else {
-      this.output.handle.innerHTML = `<code class="text-success center">🎉 Your GraphQL is looking great!</span>`
+      this.output.handle.innerHTML = `<code class="text-success center">${json["pretty"]}</span>`
     }
 
   }
@@ -157,9 +151,6 @@ class Lazy<T> {
   public get handle(): T {
     if (this.instance == null) {
       this.instance = this.initializer();
-      console.log(`uncached DOM handle "id=${this.instance.id}"`)
-    } else {
-      console.log(`cached DOM handle "id=${this.instance.id}"`)
     }
 
     return this.instance;

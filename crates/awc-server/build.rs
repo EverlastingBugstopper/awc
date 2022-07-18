@@ -141,6 +141,14 @@ impl Toolchain {
         } else {
             stage_three_error
         };
+        let stage_three_error = if let Err(e) = fs::metadata("./public/favicon.ico") {
+            stage_three_errors += 1;
+            stage_three_error
+                .context(e)
+                .context("could not find ./public/favicon.ico")
+        } else {
+            stage_three_error
+        };
         if stage_three_errors == 0 {
             Ok(())
         } else {
@@ -181,6 +189,10 @@ impl Step {
         Printer::warn(format!("{} {}", emoji, &data));
         let compiled_html = Handlebars::new().render_template(&template_contents, &data)?;
         File::write(out_path, compiled_html, emoji)?;
+        let old_fav = "./ui/favicon.ico";
+        let new_fav = "./public/favicon.ico";
+        fs::copy(old_fav, new_fav)
+            .with_context(|| format!("{} could not copy {} to {}", emoji, old_fav, new_fav))?;
         Ok(())
     }
 }
