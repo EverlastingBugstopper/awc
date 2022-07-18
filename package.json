@@ -6,11 +6,9 @@
   "scripts": {
     "build": "cargo build",
     "dev": "cargo watch -i './crates/awc-cli/*' -i './crates/awc-server/public/*' -i 'node_modules/*' -i 'package-lock.json' -x 'run -p awc-server'",
-    "docker:run": "npm run docker:build && npm run docker:publish",
-    "docker:up": "docker run --detach --publish 8080:8080 -it awc:latest",
-    "docker:sprint": "npm run docker:fast && npm run docker:publish",
+    "docker:predeploy": "npm run docker:build && npm run docker:up",
     "docker:build": "docker build -t awc .",
-    "docker:fast": "docker build -t awc --cache-from awc:builder .",
+    "docker:up": "docker run --detach --publish 8080:8080 -it awc:latest",
     "docker:debug": "docker run -it awc:latest sh",
     "docker:prune": "docker system prune -f",
     "deploy": "flyctl deploy",
