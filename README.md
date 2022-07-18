@@ -11,8 +11,8 @@ There are many ways to use `awc`. None of them are particularly stable.
 1) Install [rustup](https://rustup.rs)
 1) Run the following:
 
-```
-$ cargo install --git https://github.com/EverlastingBugstopper/awc --example cli
+```console
+$ cargo install --git https://github.com/EverlastingBugstopper/awc --example awc-cli
 ```
 
 ### With `curl`

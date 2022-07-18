@@ -8,7 +8,7 @@ authors = ["Avery Harnish <averyharnish@gmail.com>"]
 strip = "symbols"
 
 [[example]]
-name = "cli"
+name = "awc-cli"
 crate-type = ["bin"]
 
 [dependencies]
