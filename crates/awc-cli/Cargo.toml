@@ -1,0 +1,12 @@
+[package]
+name = "awc-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+awc = { path = "../awc-lib" }
+clap = { version = "3", features = ["std", "derive"] }
+
+[[bin]]
+name = "awc-cli"
+path = "main.rs"

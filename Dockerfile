@@ -15,6 +15,7 @@ RUN set -eux; \
 ENV VOLTA_VERSION="v1.0.8"
 ENV VOLTA_HOME="/volta"
 ENV PATH="$VOLTA_HOME/bin:$PATH"
+ENV IS_DOCKER=1
 
 RUN --mount=type=cache,target=/app/target \
 		--mount=type=cache,target=/app/node_modules \
@@ -32,8 +33,8 @@ RUN --mount=type=cache,target=/app/target \
     volta install npm@8; \
 		which node; \
 		which npm; \
-	 	NODE_ENV="production" cargo build --release; \
-		objcopy --compress-debug-sections target/release/awc ./awc
+	 	NODE_ENV="production" cargo build -p awc-server --release; \
+		objcopy --compress-debug-sections target/release/awc-server ./awc
 
 ################################################################################
 FROM debian:11.3-slim
@@ -50,5 +51,5 @@ RUN set -eux; \
 WORKDIR /app
 
 COPY --from=builder /app/awc ./awc
-COPY --from=builder /app/public ./public
+COPY --from=builder /app/crates/awc-server/public ./public
 CMD ["app/awc"]

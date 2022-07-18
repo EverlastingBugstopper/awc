@@ -1,0 +1,37 @@
+query {
+  cat {
+    name
+  }
+}
+
+query getPet {
+  cat {
+    owner {
+      name
+    }
+  }
+}
+
+query getPet {
+  cat {
+    treat
+  }
+}
+
+subscription sub {
+  newMessage {
+    body
+    sender
+  }
+  disallowedSecondRootField
+}
+
+type Query {
+  cat: Pet
+}
+
+type Subscription {
+  newMessage: Result
+}
+
+union Pet = Cat | Dog

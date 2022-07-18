@@ -1,4 +1,4 @@
-use apollo_compiler::ApolloCompiler;
+pub use apollo_compiler::ApolloCompiler;
 use miette::{JSONReportHandler, Report};
 use serde_json::{json, Value};
 
@@ -61,11 +61,7 @@ impl AwcDiagnostic {
             obj.remove_entry("related");
             diagnostics.push(json);
         });
-        let json = json!({"success": self.success(), "diagnostics": diagnostics});
-        // if let Some(old_no_color) = old_no_color {
-        //     env::set_var("NO_COLOR", old_no_color);
-        // }
-        json
+        json!({"success": self.success(), "diagnostics": diagnostics})
     }
 }
 

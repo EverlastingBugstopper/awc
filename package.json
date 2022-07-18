@@ -5,9 +5,9 @@
   "main": "./public/index.js",
   "scripts": {
     "build:js": "webpack",
-    "build:css": "tailwindcss -i ./src/ui/index.css -o ./public/index.css",
+    "build:css": "tailwindcss -i ./crates/awc-server/ui/index.css -o ./crates/awc-server/public/index.css",
     "build": "cargo build",
-    "dev": "cargo watch -i 'public/*' -i 'node_modules/*' -i 'package-lock.json' -x 'run'"
+    "dev": "cargo watch -i './crates/awc-cli/*' -i './crates/awc-server/public/*' -i 'node_modules/*' -i 'package-lock.json' -x 'run -p awc-server'"
   },
   "repository": {
     "type": "git",

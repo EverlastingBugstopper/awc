@@ -1,35 +1,9 @@
-[package]
-name = "awc"
-version = "0.1.0"
-edition = "2021"
-authors = ["Avery Harnish <averyharnish@gmail.com>"]
+[workspace]
+members = [
+  "crates/awc-cli", 
+  "crates/awc-lib", 
+  "crates/awc-server"
+]
 
 [profile.release]
 strip = "symbols"
-
-[[example]]
-name = "awc-cli"
-crate-type = ["bin"]
-
-[dependencies]
-# lib dependencies
-apollo-compiler = { git = "https://github.com/apollographql/apollo-rs", rev = "4286e568bc4485b2c219daaffd5781a66d5f843c" }
-miette = "4.7.1"
-serde_json = "1"
-
-# awc dependencies
-anyhow = "1"
-async-std = { version = "1.6.0", features = ["attributes"] }
-knuffel = "2"
-tide = { version = "0.17.0-beta.1" }
-
-[dev-dependencies]
-# cli dependencies
-clap = { version = "3", features = ["std", "derive"] }
-
-[build-dependencies]
-handlebars = "4"
-camino = { version = "1", features = ["serde1"] }
-rayon = "1"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
