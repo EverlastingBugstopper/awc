@@ -7,7 +7,7 @@ This crate powers [awc.fly.dev](https://awc.fly.dev).
 1) Install [`rustup`](https://rustup.rs)
 1) Install [`volta`](https://volta.sh);;
 1) From the root of the repo, run `npm i; npm run dev`
-1) Navigate to http://localhost:8080
+1) Navigate to [http://localhost:8080](http://localhost:8080)
 
 Making changes to any file impacting the server code will cause a reload.
 

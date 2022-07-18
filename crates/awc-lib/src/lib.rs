@@ -1,5 +1,5 @@
 pub use apollo_compiler::ApolloCompiler;
-use miette::{JSONReportHandler, Report};
+use miette::{GraphicalReportHandler, JSONReportHandler, Report};
 use serde_json::{json, Value};
 
 use std::borrow::Borrow;
@@ -45,23 +45,37 @@ impl AwcDiagnostic {
     pub fn json(&self) -> Value {
         // let old_no_color = env::var_os("NO_COLOR");
         // env::set_var("NO_COLOR", "1");
-        let handler = JSONReportHandler::new();
+        let json_handler = JSONReportHandler::new();
+        let pretty_handler = GraphicalReportHandler::new();
         let mut diagnostics: Vec<Value> = Vec::new();
+        let mut pretty = Vec::new();
         self.diagnostics.iter().for_each(|report| {
-            let mut buffer = String::new();
-            let _ = handler
-                .render_report(&mut buffer, report.borrow())
+            let mut pretty_buffer = String::new();
+            let _ = pretty_handler
+                .render_report(&mut pretty_buffer, report.borrow())
                 .map_err(|e| {
-                    buffer.push_str("an unknown error occurred");
+                    pretty_buffer.push_str("an unknown error occurred");
                     e
                 });
-            let mut json: Value = serde_json::from_str(&buffer).unwrap();
+            pretty.push(pretty_buffer);
+            let mut json_buffer = String::new();
+            let _ = json_handler
+                .render_report(&mut json_buffer, report.borrow())
+                .map_err(|e| {
+                    json_buffer.push_str("an unknown error occurred");
+                    e
+                });
+            let mut json: Value = serde_json::from_str(&json_buffer).unwrap();
             let obj = json.as_object_mut().unwrap();
             obj.remove_entry("filename");
             obj.remove_entry("related");
             diagnostics.push(json);
         });
-        json!({"success": self.success(), "diagnostics": diagnostics})
+        json!({
+            "success": self.success(),
+            "diagnostics": diagnostics,
+            "pretty": pretty.join(" ")
+        })
     }
 }
 

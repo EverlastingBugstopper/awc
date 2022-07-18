@@ -12,8 +12,7 @@
         <a href="/" class="btn btn-ghost normal-case text-xl">awc</a>
       </span>
       <span class="text-lg navbar-end mr-5"
-        >$ cat graphql.file | curl -X POST --data-binary @- {{BASE_URL}}</span
-      >
+        >$ rover graph introspect https://countries.trevorblades.com | curl -X POST -sSL --data-binary @- {{BASE_URL}} | jq -r .pretty
     </div>
     <div class="grid grid-cols-2 place-content-stretch min-h-[90%]">
       <code
