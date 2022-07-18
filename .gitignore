@@ -1,4 +1,4 @@
 /target
 /node_modules
 .env
-/public/js/*.js
+/public

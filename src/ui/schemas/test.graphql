@@ -1,0 +1,11 @@
+type Subscription {
+  newMessage: Something
+}
+
+query getPet {
+  name: String
+}
+
+query getPet {
+  owner: String
+}

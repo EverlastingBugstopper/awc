@@ -1,7 +1,6 @@
 use apollo_compiler::ApolloCompiler;
-use tide::{log, Request};
-
 use awc::AwcDiagnostic;
+use tide::{log, Request};
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {

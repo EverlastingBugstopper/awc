@@ -45,7 +45,7 @@ class GraphQLValidator {
         }
   
         // start building up the diagnostic div
-        let inner = `<code class="m-3 block whitespace-pre overflow-x-scroll">`;
+        let inner = `<div class="block">`;
   
         // apollo-compiler validation error
         const code = diagnostic["code"];
@@ -124,15 +124,19 @@ class GraphQLValidator {
               }
             }
           }
-          
-  
         }
-        inner += "</code>"
+
+        const help = diagnostic["help"];
+        if (help) {
+          inner += `<br/>${SPACE}${SPACE}<span class="text-info">help:</span><span class="text-content">${SPACE}${help}</span>`
+        }
+
+        inner += "</div>"
         pretties.push(inner);
       }
       this.output.handle.innerHTML = pretties.join("");
     } else {
-      this.output.handle.innerHTML = `<code class="text-success center">✅ Your GraphQL is looking great!</span>`
+      this.output.handle.innerHTML = `<code class="text-success center">🎉 Your GraphQL is looking great!</span>`
     }
 
   }
@@ -151,14 +155,12 @@ class Lazy<T> {
   }
 
   public get handle(): T {
-    console.log(`----- getting handle ------`)
     if (this.instance == null) {
       this.instance = this.initializer();
-      console.log(`first-time init of '${this.instance.id}'`)
+      console.log(`uncached DOM handle "id=${this.instance.id}"`)
     } else {
-      console.log(`fast-grab of '${this.instance.id}'`)
+      console.log(`cached DOM handle "id=${this.instance.id}"`)
     }
-    console.log(`----- return handle -------`)
 
     return this.instance;
   }

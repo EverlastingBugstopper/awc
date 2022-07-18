@@ -1,14 +1,38 @@
-FROM rust:1.61.0-slim-bullseye AS builder
+FROM rust:slim AS builder
 
 WORKDIR /app
 COPY . .
+
+RUN set -eux; \
+		export DEBIAN_FRONTEND=noninteractive; \
+	  apt update; \
+		apt install --yes --no-install-recommends pkg-config libssl-dev curl; \
+		apt clean autoclean; \
+		apt autoremove --yes; \
+		rm -rf /var/lib/{apt,dpkg,cache,log}/; \
+		echo "Installed base utils!"
+
+ENV VOLTA_VERSION="v1.0.8"
+ENV VOLTA_HOME="/volta"
+ENV PATH="$VOLTA_HOME/bin:$PATH"
+
 RUN --mount=type=cache,target=/app/target \
+		--mount=type=cache,target=/app/node_modules \
 		--mount=type=cache,target=/usr/local/cargo/registry \
 		--mount=type=cache,target=/usr/local/cargo/git \
+		--mount=type=cache,target=/usr/local/cargo/bin \
 		--mount=type=cache,target=/usr/local/rustup \
+		--mount=type=cache target=${VOLTA_HOME} \
 		set -eux; \
 		rustup install stable; \
-	 	NODE_ENV="production" cargo build --bin awc --no-default-features --features http --release; \
+		mkdir -p $VOLTA_HOME; \
+    curl -sSL https://get.volta.sh | bash -s -- --skip-setup; \
+		which volta; \
+		volta install node@16; \
+    volta install npm@8; \
+		which node; \
+		which npm; \
+	 	NODE_ENV="production" cargo build --release; \
 		objcopy --compress-debug-sections target/release/awc ./awc
 
 ################################################################################
@@ -26,4 +50,5 @@ RUN set -eux; \
 WORKDIR /app
 
 COPY --from=builder /app/awc ./awc
+COPY --from=builder /app/public ./public
 CMD ["app/awc"]

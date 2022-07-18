@@ -12,8 +12,7 @@
         <a href="/" class="btn btn-ghost normal-case text-xl">awc</a>
       </span>
       <span class="text-lg navbar-end mr-5"
-        >$ cat graphql.file | curl -X POST --data-binary @-
-        https://awc.fly.dev</span
+        >$ cat graphql.file | curl -X POST --data-binary @- {{BASE_URL}}</span
       >
     </div>
     <div class="grid grid-cols-2 place-content-stretch min-h-[90%]">
@@ -27,15 +26,14 @@
           type="text"
           name="graphql"
         >
-type Subscription {
-  newMessage: Result
-}</textarea
+{{PLACEHOLDER_SCHEMA}}
+</textarea
         >
       </code>
-      <div
+      <code
         id="diagnostics"
-        class="min-h-[80%] m-3 bg-base-300 rounded-box"
-      ></div>
+        class="block whitespace-pre overflow-x-scroll min-h-[80%] m-3 bg-base-300 rounded-box"
+      ></code>
     </div>
   </body>
 </html>
