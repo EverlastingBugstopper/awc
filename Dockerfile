@@ -52,4 +52,5 @@ WORKDIR /app
 
 COPY --from=builder /app/awc ./awc
 COPY --from=builder /app/crates/awc-server/public ./public
-CMD ["app/awc"]
+EXPOSE 8080
+CMD ["./awc"]

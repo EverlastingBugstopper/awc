@@ -1,13 +1,21 @@
 {
-  "name": "awc-ui",
+  "name": "awc-server-toolchain",
   "version": "1.0.0",
-  "description": "front end for awc",
+  "description": "toolchain for building awc-server/public from awc-server/ui, primarily via build.rs, docker, and fly.io",
   "main": "./public/index.js",
   "scripts": {
-    "build:js": "webpack",
-    "build:css": "tailwindcss -i ./crates/awc-server/ui/index.css -o ./crates/awc-server/public/index.css",
     "build": "cargo build",
-    "dev": "cargo watch -i './crates/awc-cli/*' -i './crates/awc-server/public/*' -i 'node_modules/*' -i 'package-lock.json' -x 'run -p awc-server'"
+    "dev": "cargo watch -i './crates/awc-cli/*' -i './crates/awc-server/public/*' -i 'node_modules/*' -i 'package-lock.json' -x 'run -p awc-server'",
+    "docker:run": "npm run docker:build && npm run docker:publish",
+    "docker:up": "docker run --detach --publish 8080:8080 -it awc:latest",
+    "docker:sprint": "npm run docker:fast && npm run docker:publish",
+    "docker:build": "docker build -t awc .",
+    "docker:fast": "docker build -t awc --cache-from awc:builder .",
+    "docker:debug": "docker run -it awc:latest sh",
+    "docker:prune": "docker system prune -f",
+    "deploy": "flyctl deploy",
+    "build:js": "webpack",
+    "build:css": "tailwindcss -i ./crates/awc-server/ui/index.css -o ./crates/awc-server/public/index.css"
   },
   "repository": {
     "type": "git",

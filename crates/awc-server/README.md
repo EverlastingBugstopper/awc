@@ -17,4 +17,4 @@ Making changes to any file impacting the server code will cause a reload.
 
 ## Deploying
 
-Test your docker build by running `docker build . -t awc`. Run `flyctl deploy` to deploy if you have permissions. You can debug your Docker image by running `docker fun -it awc:latest sh` and poking around the file system.
+Build a Docker image locally and map the service to a local port by running `npm run docker:predeploy`. Deploy to fly by running `flyctl deploy` to deploy if you have permissions. You can debug your Docker image by running `npm run docker:debug` and poking around the file system. I used [this article](https://fasterthanli.me/articles/remote-development-with-rust-on-fly-io) as my starting point for this.
