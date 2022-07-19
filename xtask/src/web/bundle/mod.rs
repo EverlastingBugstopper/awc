@@ -1,10 +1,12 @@
 mod all;
+mod bucket;
 mod css;
 mod deps;
 mod html;
 mod js;
 
 pub(crate) use all::*;
+pub(crate) use bucket::*;
 pub(crate) use css::*;
 pub(crate) use deps::*;
 pub(crate) use html::*;
@@ -26,6 +28,9 @@ enum BundleCommands {
     /// Runs in parallel where possible.
     All(AllCommands),
 
+    /// Copy files from bucket to public
+    Bucket(BucketCommand),
+
     /// Install node dependencies.
     Deps(DepsCommand),
 
@@ -44,6 +49,7 @@ impl BundleCommand {
     pub(crate) fn run(&self) -> Result<()> {
         match &self.bundle_command {
             BundleCommands::All(command) => command.run(),
+            BundleCommands::Bucket(command) => command.run(),
             BundleCommands::Deps(command) => command.run(),
             BundleCommands::Css(command) => command.run(),
             BundleCommands::Js(command) => command.run(),

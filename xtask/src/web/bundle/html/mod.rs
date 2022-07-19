@@ -52,7 +52,6 @@ impl HtmlCommandOpts {
 
     /// Reads template HTML from disk
     fn read_template(&self) -> Result<String> {
-        Log::info(format!("template file: {}", &self.template_file));
         let contents =
             Fs::read_file(&self.template_file, EMOJI).context("Could not read template HTML")?;
         Ok(contents)

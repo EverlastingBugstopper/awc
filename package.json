@@ -7,7 +7,7 @@
     "bundle": "cargo xtask web bundle all",
     "dev": "npm run docker:down && concurrently \"npm run dev:browser\" \"npm run dev:server\"",
     "dev:browser": "cargo watch -w 'schemas' -w './awc-web' -w './xtask' -w './tailwind.config.js' -w './webpack.config.js' -w './package.json' -i './awc-web/public/*' -i './awc-web/src/server/*' -i 'node_modules/*' -i 'package-lock.json' -x 'xtask web bundle all'",
-    "dev:server": "cargo watch -w './awc-web/src/server' -w './awc-web/Cargo.toml' -x 'run -p awc-web'",
+    "dev:server": "cargo watch -w './xtask' -w './saucer' -w './awc-web/src/server' -w './awc-web/Cargo.toml' -x 'run -p awc-web'",
     "docker:predeploy": "npm run docker:build && npm run docker:up-detached",
     "docker:build": "docker build -t awc .",
     "docker:up": "npm run docker:down && docker run --init --publish 8080:8080 -t awc:latest",

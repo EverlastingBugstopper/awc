@@ -1,4 +1,4 @@
-use crate::{ParallelSaucers, Saucer};
+use crate::{Log, ParallelSaucers, Saucer, Timer};
 
 use anyhow::Result;
 
@@ -35,16 +35,25 @@ where
     S: Saucer,
 {
     fn run(&self) -> Result<()> {
+        let timer = Timer::start();
         ParallelSaucers::run(
             self.emoji(),
             self.description(),
             &*self.first,
             &*self.second,
-        )
+        )?;
+        let elapsed = timer.stop();
+        Log::info(format!("{} completed in {}", self.description(), &elapsed));
+        Ok(())
     }
 
     fn description(&self) -> String {
-        format!("stage [{}/{}]", &self.stage_num, &self.total_stages)
+        format!(
+            "{} stage [{}/{}]",
+            self.emoji(),
+            &self.stage_num,
+            &self.total_stages
+        )
     }
 
     fn emoji(&self) -> String {

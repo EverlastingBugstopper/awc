@@ -1,5 +1,7 @@
-use crate::web::bundle::{CssCommand, DepsCommand, HtmlCommand, JsCommand};
-use saucer::{prelude::*, Log, SauceStage, Timer};
+use crate::web::bundle::{
+    BucketCommand, BucketOpts, CssCommand, DepsCommand, HtmlCommand, JsCommand,
+};
+use saucer::{prelude::*, SauceStage};
 
 use super::HtmlCommandOpts;
 
@@ -10,6 +12,9 @@ pub(crate) struct AllCommands {
 
     #[clap(flatten)]
     html_opts: HtmlCommandOpts,
+
+    #[clap(flatten)]
+    bucket_opts: BucketOpts,
 }
 
 impl Saucer for AllCommands {
@@ -19,25 +24,25 @@ impl Saucer for AllCommands {
 
     /// Runs all bundle steps, parallelizing where possible
     fn run(&self) -> Result<()> {
-        let total_stages = 2;
+        let total_stages = 3;
         let mut current_stage = 1;
-        let timer = Timer::start();
         SauceStage::new(
             current_stage,
             total_stages,
+            SauceStage::new(
+                current_stage + 1,
+                total_stages,
+                HtmlCommand {
+                    opts: self.html_opts.clone(),
+                },
+                BucketCommand {
+                    opts: self.bucket_opts.clone(),
+                },
+            ),
             DepsCommand::new(),
-            HtmlCommand {
-                opts: self.html_opts.clone(),
-            },
         )
         .run()?;
-        let elapsed = timer.stop();
-        Log::info(format!(
-            "stage [{}/{}] completed in {}",
-            current_stage, total_stages, elapsed
-        ));
-        current_stage += 1;
-        let timer = Timer::start();
+        current_stage += 2;
         SauceStage::new(
             current_stage,
             total_stages,
@@ -45,11 +50,6 @@ impl Saucer for AllCommands {
             JsCommand::new(),
         )
         .run()?;
-        let elapsed = timer.stop();
-        Log::info(format!(
-            "stage [{}/{}] completed in {}",
-            current_stage, total_stages, elapsed
-        ));
         Ok(())
     }
 }
