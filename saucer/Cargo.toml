@@ -1,0 +1,11 @@
+[package]
+name = "saucer"
+version = "0.1.0"
+edition = "2021"
+description = "a kitchen-sink CLI framework that uses the power of anyhow, camino, clap, and rayon for fast iteration on CLI tools"
+
+[dependencies]
+rayon = "1"
+anyhow = "1"
+camino = { version = "1", features = ["serde1"] }
+clap = { version = "3", features = ["std", "derive", "env"] }

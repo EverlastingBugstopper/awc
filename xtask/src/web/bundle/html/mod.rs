@@ -3,9 +3,8 @@ const EMOJI: &str = "🛵 ";
 mod config;
 use config::Config;
 
-use crate::framework::{prelude::*, Fs, Log};
-use camino::Utf8PathBuf;
 use handlebars::Handlebars;
+use saucer::{prelude::*, Fs, Log, Utf8PathBuf};
 use std::str;
 
 #[derive(Clone, Debug, Parser)]
@@ -26,7 +25,7 @@ pub(crate) struct HtmlCommandOpts {
     public_file: Utf8PathBuf,
 }
 
-impl Command for HtmlCommand {
+impl Saucer for HtmlCommand {
     /// Reads JSON from an awc.json and inserts it
     fn run(&self) -> Result<()> {
         let config = self.opts.get_config()?;
@@ -64,7 +63,7 @@ impl HtmlCommandOpts {
     where
         C: AsRef<[u8]>,
     {
-        Log::info(format!("{} templatizing...", EMOJI));
+        Log::info(format!("{} templatizing from an awc.json file", EMOJI));
         let data = config.json(EMOJI)?;
         let compiled_html = Handlebars::new().render_template(
             str::from_utf8(contents.as_ref()).context("template was not valid UTF-8")?,

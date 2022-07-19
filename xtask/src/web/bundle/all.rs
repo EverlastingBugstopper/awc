@@ -1,7 +1,5 @@
-use crate::{
-    framework::{prelude::*, Log, Stage, Timer},
-    web::bundle::{CssCommand, DepsCommand, HtmlCommand, JsCommand},
-};
+use crate::web::bundle::{CssCommand, DepsCommand, HtmlCommand, JsCommand};
+use saucer::{prelude::*, Log, SauceStage, Timer};
 
 use super::HtmlCommandOpts;
 
@@ -14,7 +12,7 @@ pub(crate) struct AllCommands {
     html_opts: HtmlCommandOpts,
 }
 
-impl Command for AllCommands {
+impl Saucer for AllCommands {
     fn description(&self) -> String {
         "cargo xtask web bundle all".to_string()
     }
@@ -24,7 +22,7 @@ impl Command for AllCommands {
         let total_stages = 2;
         let mut current_stage = 1;
         let timer = Timer::start();
-        Stage::new(
+        SauceStage::new(
             current_stage,
             total_stages,
             DepsCommand::new(),
@@ -40,7 +38,7 @@ impl Command for AllCommands {
         ));
         current_stage += 1;
         let timer = Timer::start();
-        Stage::new(
+        SauceStage::new(
             current_stage,
             total_stages,
             CssCommand::new(),

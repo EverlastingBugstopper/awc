@@ -1,12 +1,12 @@
-use crate::framework::{Command, ParallelCommands};
+use crate::{ParallelSaucers, Saucer};
 
 use anyhow::Result;
 
 #[derive(Debug, Clone)]
-pub(crate) struct Stage<F, S>
+pub struct SauceStage<F, S>
 where
-    F: Command,
-    S: Command,
+    F: Saucer,
+    S: Saucer,
 {
     stage_num: usize,
     total_stages: usize,
@@ -14,12 +14,12 @@ where
     second: Box<S>,
 }
 
-impl<F, S> Stage<F, S>
+impl<F, S> SauceStage<F, S>
 where
-    F: Command,
-    S: Command,
+    F: Saucer,
+    S: Saucer,
 {
-    pub(crate) fn new(stage_num: usize, total_stages: usize, first: F, second: S) -> Self {
+    pub fn new(stage_num: usize, total_stages: usize, first: F, second: S) -> Self {
         Self {
             stage_num,
             total_stages,
@@ -29,13 +29,13 @@ where
     }
 }
 
-impl<F, S> Command for Stage<F, S>
+impl<F, S> Saucer for SauceStage<F, S>
 where
-    F: Command,
-    S: Command,
+    F: Saucer,
+    S: Saucer,
 {
     fn run(&self) -> Result<()> {
-        ParallelCommands::run(
+        ParallelSaucers::run(
             self.emoji(),
             self.description(),
             &*self.first,

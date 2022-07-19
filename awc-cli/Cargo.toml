@@ -2,11 +2,14 @@
 name = "awc-cli"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 awc = { path = "../awc-lib" }
 clap = { version = "3", features = ["std", "derive"] }
+notify = "4"
+saucer = { path = "../saucer" }
 
 [[bin]]
 name = "awc-cli"
-path = "main.rs"
+path = "./src/main.rs"

@@ -1,6 +1,5 @@
-use xtask::*;
+use xtask::{Result, Xtask};
 
 fn main() -> Result<()> {
-    let app = Xtask::from_args();
-    app.run()
+    Xtask::run_from_args()
 }

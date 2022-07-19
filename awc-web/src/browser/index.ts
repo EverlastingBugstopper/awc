@@ -60,7 +60,6 @@ class GraphQLValidator {
         // of the source
         const labels = diagnostic["labels"];
         for (const l of labels) {
-          console.log("reading labels")
           const labelSpan = l["span"];
   
           // 34
