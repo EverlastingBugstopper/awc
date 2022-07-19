@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 description = "a kitchen-sink CLI framework that uses the power of anyhow, camino, clap, and rayon for fast iteration on CLI tools"
 
+[lib]
+name = "saucer"
+
 [dependencies]
 rayon = "1"
 anyhow = "1"
