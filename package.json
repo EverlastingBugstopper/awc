@@ -1,19 +1,21 @@
 {
-  "name": "awc-server-toolchain",
+  "name": "awc-web-toolchain",
   "version": "1.0.0",
-  "description": "toolchain for building awc-server/public from awc-server/ui, primarily via build.rs, docker, and fly.io",
+  "description": "toolchain for building awc-web, primarily via xtask, docker, and fly.io",
   "main": "./public/index.js",
   "scripts": {
-    "build": "cargo build",
-    "dev": "cargo watch -i './crates/awc-cli/*' -i './crates/awc-server/public/*' -i 'node_modules/*' -i 'package-lock.json' -x 'run -p awc-server'",
+    "bundle": "cargo xtask web bundle all",
+    "dev": "concurrently \"npm run dev:browser\" \"npm run dev:server\"",
+    "dev:browser": "cargo watch -w 'schemas' -w './awc-web' -w './xtask' -w './tailwind.config.js' -w './webpack.config.js' -w './package.json' -i './awc-web/public/*' -i './awc-web/src/server/*' -i 'node_modules/*' -i 'package-lock.json' -x 'xtask web bundle all'",
+    "dev:server": "cargo watch -w './awc-web/src/server' -w './awc-web/Cargo.toml' -x 'run -p awc-web'",
     "docker:predeploy": "npm run docker:build && npm run docker:up",
-    "docker:build": "docker build -t awc .",
+    "docker:build": "docker image build -t awc .",
     "docker:up": "docker run --detach --publish 8080:8080 -it awc:latest",
     "docker:debug": "docker run -it awc:latest sh",
     "docker:prune": "docker system prune -f",
     "deploy": "flyctl deploy",
     "build:js": "webpack",
-    "build:css": "tailwindcss -i ./crates/awc-server/ui/index.css -o ./crates/awc-server/public/index.css"
+    "build:css": "tailwindcss -i ./awc-web/src/browser/index.css -o ./awc-web/public/index.css"
   },
   "repository": {
     "type": "git",
@@ -38,5 +40,8 @@
   },
   "volta": {
     "node": "16.16.0"
+  },
+  "devDependencies": {
+    "concurrently": "^7.3.0"
   }
 }

@@ -9,7 +9,7 @@ There are many ways to use `awc`. None of them are particularly stable.
 ### Run the CLI
 
 1) Install [rustup](https://rustup.rs)
-1) Get a [GraphQL Schema](./awc-server/schemas/prod.graphql) and save it to `document.graphql`
+1) Get a [GraphQL Schema](./schemas/prod.graphql) and save it to `document.graphql`
 1) Run the following:
 
 ```console

@@ -1,4 +1,0 @@
-{
-  "base_url": "http://localhost:8080",
-  "placeholder_schema_path": "./ui/schemas/dev.graphql"
-}

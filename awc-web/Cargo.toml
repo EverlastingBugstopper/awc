@@ -1,0 +1,14 @@
+[package]
+name = "awc-web"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "awc-web"
+path = "./src/server/main.rs"
+
+[dependencies]
+anyhow = "1"
+async-std = { version = "1.6.0", features = ["attributes"] }
+awc = { path = "../awc-lib" }
+tide = { version = "0.17.0-beta.1" }

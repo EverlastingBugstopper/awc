@@ -1,10 +1,10 @@
 const path = require("path");
 
-const BASE = path.resolve(__dirname, "crates/awc-server");
+const BASE = path.resolve(__dirname, "awc-web");
 
 module.exports = {
   mode: "production",
-  entry: path.resolve(BASE, "ui/index.ts"),
+  entry: path.resolve(BASE, "src/browser/index.ts"),
   output: {
     path: path.resolve(BASE, "public"),
     filename: "index.js",
