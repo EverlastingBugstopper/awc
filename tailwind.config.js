@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 const path = require("path");
-const BASE = path.resolve(__dirname, "crates/awc-server");
+const BASE = path.resolve(__dirname, "awc-web");
 module.exports = {
   content: [
-    path.resolve(BASE, "ui/template.html"),
-    path.resolve(BASE, "ui/index.ts"),
+    path.resolve(BASE, "src/browser/template.html"),
+    path.resolve(BASE, "src/browser/index.ts"),
   ],
   theme: {
     extend: {},

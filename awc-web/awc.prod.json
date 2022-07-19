@@ -1,0 +1,4 @@
+{
+  "base_url": "https://awc.fly.dev",
+  "placeholder_schema_path": "./schemas/prod.graphql"
+}
