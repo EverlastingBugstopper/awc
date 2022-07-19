@@ -30,8 +30,8 @@ pub enum CrateCommand {
 }
 
 impl Xtask {
-    pub fn from_args() -> Self {
-        Self::from_args()
+    pub fn run_from_args() -> Result<()> {
+        Self::from_args().run()
     }
 
     pub fn run(&self) -> Result<()> {

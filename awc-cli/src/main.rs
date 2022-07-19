@@ -1,6 +1,5 @@
-use awc_cli::{AwcCli, Parser, Result};
+use awc_cli::{AwcCli, Result};
 
 fn main() -> Result<()> {
-    let app = AwcCli::from_args();
-    app.run()
+    AwcCli::run_from_args()
 }

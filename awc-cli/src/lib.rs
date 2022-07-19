@@ -11,6 +11,10 @@ pub struct AwcCli {
 }
 
 impl AwcCli {
+    pub fn run_from_args() -> Result<()> {
+        Self::from_args().run()
+    }
+
     pub fn run(&self) -> Result<()> {
         self.awc_command.run()
     }
