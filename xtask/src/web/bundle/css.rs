@@ -2,7 +2,7 @@ const EMOJI: &str = "💅 ";
 
 use clap::Parser;
 
-use crate::framework::{prelude::*, Process};
+use saucer::{prelude::*, Process};
 
 #[derive(Default, Clone, Copy, Debug, Parser)]
 pub(crate) struct CssCommand {}
@@ -14,7 +14,7 @@ impl CssCommand {
     }
 }
 
-impl Command for CssCommand {
+impl Saucer for CssCommand {
     /// Runs tailwind to generate only the CSS we need
     fn run(&self) -> Result<()> {
         Process::new("npm", &["run", "build:css"]).run(EMOJI)

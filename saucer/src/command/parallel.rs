@@ -1,26 +1,26 @@
 use anyhow::Result;
 
-use crate::framework::{prelude::*, Timer};
+use crate::{prelude::*, Timer};
 
 use std::{fmt::Display, marker::PhantomData};
 
 #[derive(Debug, Clone)]
-pub(crate) struct ParallelCommands<F, S>
+pub struct ParallelSaucers<F, S>
 where
-    F: Command,
-    S: Command,
+    F: Saucer,
+    S: Saucer,
 {
     phantom_first: PhantomData<F>,
     phantom_second: PhantomData<S>,
 }
 
-impl<F, S> ParallelCommands<F, S>
+impl<F, S> ParallelSaucers<F, S>
 where
-    F: Command,
-    S: Command,
+    F: Saucer,
+    S: Saucer,
 {
     /// run your two `ParallelCommand`s in parallel and aggregate any errors
-    pub(crate) fn run(
+    pub fn run(
         emoji: impl Display,
         description: impl Display,
         first: &F,

@@ -4,14 +4,15 @@ use anyhow::{anyhow, Result};
 
 use super::Log;
 
-pub(crate) struct Process {
+pub struct Process {
     bin: String,
     args: Vec<String>,
     description: String,
 }
 
 impl Process {
-    pub(crate) fn new<I, S>(bin: impl Display, args: I) -> Self
+    /// Create a `Process` to run later
+    pub fn new<I, S>(bin: impl Display, args: I) -> Self
     where
         I: IntoIterator<Item = S>,
         S: AsRef<str>,
@@ -35,8 +36,8 @@ impl Process {
         }
     }
 
-    /// Run a command and print its output
-    pub(crate) fn run(&self, emoji: impl Display) -> Result<()> {
+    /// Run a `Process` and print its output
+    pub fn run(&self, emoji: impl Display) -> Result<()> {
         Log::info(format!("{} {}", emoji, &self.description));
         let output = Command::new(&self.bin).args(&self.args).output()?;
         if let Ok(stdout) = str::from_utf8(&output.stdout) {

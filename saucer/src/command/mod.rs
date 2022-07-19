@@ -1,15 +1,15 @@
+mod parallel;
 mod stage;
-mod step;
 
 use std::fmt::Debug;
 
-pub(crate) use stage::*;
-pub(crate) use step::*;
+pub use parallel::*;
+pub use stage::*;
 
-use crate::framework::prelude::*;
+use crate::prelude::*;
 
 /// Types that implement this trait can be run in stages
-pub trait Command
+pub trait Saucer
 where
     Self: Sync + Clone + Debug + 'static,
 {
@@ -18,14 +18,14 @@ where
         Box::new(|| self.run())
     }
 
-    /// The function that a `Command` runs
+    /// The function that a `Saucer` runs
     fn run(&self) -> Result<()>;
 
-    /// the emoji for a `Command`
+    /// the emoji for a `Saucer`
     fn emoji(&self) -> String {
         "".to_string()
     }
 
-    /// the description for a `Command`
+    /// the description for a `Saucer`
     fn description(&self) -> String;
 }

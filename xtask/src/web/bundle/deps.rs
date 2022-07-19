@@ -2,7 +2,7 @@ const EMOJI: &str = "⬇️ ";
 
 use clap::Parser;
 
-use crate::framework::{prelude::*, Process};
+use saucer::{prelude::*, Process};
 
 #[derive(Default, Clone, Copy, Debug, Parser)]
 pub(crate) struct DepsCommand {}
@@ -14,7 +14,7 @@ impl DepsCommand {
     }
 }
 
-impl Command for DepsCommand {
+impl Saucer for DepsCommand {
     /// Installs node dependencies
     fn run(&self) -> Result<()> {
         Process::new("npm", &["install"]).run(EMOJI)

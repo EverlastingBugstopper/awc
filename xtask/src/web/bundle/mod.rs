@@ -10,7 +10,7 @@ pub(crate) use deps::*;
 pub(crate) use html::*;
 pub(crate) use js::*;
 
-use crate::framework::prelude::*;
+use saucer::prelude::*;
 
 #[derive(Debug, Clone, Parser)]
 pub(crate) struct BundleCommand {

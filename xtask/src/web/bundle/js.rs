@@ -2,7 +2,7 @@ const EMOJI: &str = "🧳 ";
 
 use clap::Parser;
 
-use crate::framework::{prelude::*, Process};
+use saucer::{prelude::*, Process};
 
 #[derive(Default, Clone, Copy, Debug, Parser)]
 pub(crate) struct JsCommand {}
@@ -14,7 +14,7 @@ impl JsCommand {
     }
 }
 
-impl Command for JsCommand {
+impl Saucer for JsCommand {
     /// Transpiles TypeScript source to minified JavaScript
     fn run(&self) -> Result<()> {
         Process::new("npm", &["run", "build:js"]).run(EMOJI)

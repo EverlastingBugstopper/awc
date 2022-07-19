@@ -1,19 +1,20 @@
 use std::time::Instant;
 
-pub(crate) struct Timer {
+/// Time sections of your application
+pub struct Timer {
     start_time: Instant,
 }
 
 impl Timer {
     /// start a timer
-    pub(crate) fn start() -> Self {
+    pub fn start() -> Self {
         Self {
             start_time: Instant::now(),
         }
     }
 
     /// stop the timer and get the elapsed time
-    pub(crate) fn stop(&self) -> String {
+    pub fn stop(&self) -> String {
         let elapsed = self.start_time.elapsed();
         let millis = elapsed.as_millis() as u64;
         if millis > 1000 {

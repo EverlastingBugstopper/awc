@@ -5,14 +5,12 @@ pub(crate) fn relative_dir(input: &str) -> Utf8PathBuf {
     manifest_dir.parent().unwrap().join(input)
 }
 
-pub(crate) mod framework;
 mod web;
 
 use std::{env, str::FromStr};
 
-use camino::Utf8PathBuf;
-pub use framework::prelude::*;
-use framework::{Log, Timer};
+pub use saucer::Result;
+use saucer::{clap, Log, Parser, Timer, Utf8PathBuf};
 
 use web::WebCommand;
 
@@ -32,6 +30,10 @@ pub enum CrateCommand {
 }
 
 impl Xtask {
+    pub fn from_args() -> Self {
+        Self::from_args()
+    }
+
     pub fn run(&self) -> Result<()> {
         let timer = Timer::start();
         match &self.crate_command {
