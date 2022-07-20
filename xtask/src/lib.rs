@@ -2,7 +2,12 @@ const MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
 pub(crate) fn relative_dir(input: &str) -> Utf8PathBuf {
     let manifest_dir = Utf8PathBuf::from_str(MANIFEST_DIR).unwrap();
-    manifest_dir.parent().unwrap().join(input)
+    let parent = manifest_dir.parent().unwrap();
+    parent
+        .join(input)
+        .strip_prefix(parent)
+        .unwrap()
+        .to_path_buf()
 }
 
 mod web;
@@ -10,7 +15,7 @@ mod web;
 use std::{env, str::FromStr};
 
 pub use saucer::Result;
-use saucer::{clap, Log, Parser, Timer, Utf8PathBuf};
+use saucer::{prelude::*, Log, Timer, Utf8PathBuf};
 
 use web::WebCommand;
 
@@ -24,7 +29,7 @@ pub struct Xtask {
     pub crate_command: CrateCommand,
 }
 
-#[derive(Debug, Parser)]
+#[derive(Subcommand, Debug)]
 pub enum CrateCommand {
     Web(WebCommand),
 }

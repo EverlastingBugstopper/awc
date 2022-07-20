@@ -1,8 +1,7 @@
 use anyhow::{anyhow, Context, Result};
-use camino::{Utf8Path, Utf8PathBuf};
-use walkdir::WalkDir;
+use camino::Utf8Path;
 
-use super::Log;
+use crate::Log;
 
 use std::{fmt::Display, fs};
 
@@ -71,31 +70,33 @@ impl Fs {
             "{} copying contents of {} to {}",
             emoji, in_dir, out_dir
         ));
-        for entry in WalkDir::new(in_dir) {
+        for entry in in_dir
+            .read_dir_utf8()
+            .context("cannot read from your file system")?
+        {
             if let Ok(entry) = entry {
-                if let Ok(entry) = Utf8PathBuf::try_from(entry.path().to_path_buf()) {
-                    if let Ok(metadata) = fs::metadata(&entry) {
-                        if metadata.is_file() && !entry.to_string().contains("README.md") {
-                            if let Some(entry_name) = entry.file_name() {
-                                let out_file = out_dir.join(entry_name);
-                                Log::info(format!("{} copying {} to {}", emoji, &entry, &out_file));
-                                fs::copy(&entry, &out_file).with_context(|| {
-                                    format!(
-                                        "{} could not copy {} to {}",
-                                        &emoji, &in_dir, &out_file
-                                    )
-                                })?;
-                            }
-                        } else if metadata.is_dir() {
-                            if entry != in_dir {
-                                if let Some(entry_name) = entry.file_name() {
-                                    let out_dir = out_dir.join(entry_name);
-                                    Log::info(format!(
-                                        "{} copying {} to {}",
-                                        emoji, &entry, &out_dir
-                                    ));
-                                    Fs::copy_dir_all(&entry, &out_dir, &emoji)?;
-                                }
+                let entry_path = entry.path();
+                if let Ok(metadata) = fs::metadata(&entry_path) {
+                    if metadata.is_file() && !entry_path.to_string().contains("README.md") {
+                        if let Some(entry_name) = entry_path.file_name() {
+                            let out_file = out_dir.join(entry_name);
+                            Log::info(format!(
+                                "{} copying {} to {}",
+                                emoji, &entry_path, &out_file
+                            ));
+                            fs::copy(&entry_path, &out_file).with_context(|| {
+                                format!("{} could not copy {} to {}", &emoji, &in_dir, &out_file)
+                            })?;
+                        }
+                    } else if metadata.is_dir() {
+                        if entry_path != in_dir {
+                            if let Some(entry_name) = entry_path.file_name() {
+                                let out_dir = out_dir.join(entry_name);
+                                Log::info(format!(
+                                    "{} copying {} to {}",
+                                    emoji, &entry_path, &out_dir
+                                ));
+                                Fs::copy_dir_all(&entry_path, &out_dir, &emoji)?;
                             }
                         }
                     }

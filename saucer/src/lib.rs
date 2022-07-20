@@ -13,4 +13,4 @@ pub use timer::*;
 
 pub use anyhow::{anyhow, Context, Result};
 pub use camino::{Utf8Path, Utf8PathBuf};
-pub use clap::{self, Parser};
+pub use clap::{self, Subcommand, Parser};

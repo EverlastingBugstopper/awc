@@ -15,12 +15,17 @@ pub(crate) struct HtmlCommand {
 
 #[derive(Debug, Clone, Parser)]
 pub(crate) struct HtmlCommandOpts {
-    #[clap(long)]
+    /// Path to an `awc.json` handlebars file.
+    ///
+    /// https://docs.rs/handlebars/latest/handlebars/
+    #[clap(long, env = "AWC_CONFIG")]
     awc_config: Option<Utf8PathBuf>,
 
+    /// Path to a templated HTML file
     #[clap(long, default_value_t = HtmlCommandOpts::relative_dir("src/browser/template.html"))]
     template_file: Utf8PathBuf,
 
+    /// Destination path for templatized HTML
     #[clap(long, default_value_t = HtmlCommandOpts::relative_dir("public/index.html"))]
     public_file: Utf8PathBuf,
 }

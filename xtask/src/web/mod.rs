@@ -1,24 +1,22 @@
 mod bundle;
 
-use bundle::BundleCommand;
+use bundle::{AllCommands, AllOpts, BundleCommand};
 
-use saucer::{prelude::*, Utf8PathBuf};
+use saucer::prelude::*;
 use std::fmt::Debug;
 
+/// Run the build step for `awc-web`
 #[derive(Debug, Parser)]
 pub struct WebCommand {
     /// Build `awc-web`
     #[clap(subcommand)]
-    web_command: WebCommands,
+    web_command: Option<WebCommands>,
 
-    /// Path to an `awc.json` handlebars file.
-    ///
-    /// https://docs.rs/handlebars/latest/handlebars/
-    #[clap(long, env = "AWC_CONFIG")]
-    awc_config: Option<Utf8PathBuf>,
+    #[clap(flatten)]
+    all_opts: AllOpts,
 }
 
-#[derive(Debug, Clone, Parser)]
+#[derive(Debug, Clone, Subcommand)]
 enum WebCommands {
     /// Bundle source code for front-end
     Bundle(BundleCommand),
@@ -27,8 +25,11 @@ enum WebCommands {
 impl WebCommand {
     pub(crate) fn run(&self) -> Result<()> {
         match &self.web_command {
-            WebCommands::Bundle(command) => command.run()?,
+            Some(WebCommands::Bundle(command)) => command.run(),
+            None => AllCommands {
+                opts: self.all_opts.clone(),
+            }
+            .run(),
         }
-        Ok(())
     }
 }

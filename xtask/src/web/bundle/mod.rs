@@ -18,10 +18,13 @@ use saucer::prelude::*;
 pub(crate) struct BundleCommand {
     /// Run a specific bundle step
     #[clap(subcommand)]
-    bundle_command: BundleCommands,
+    bundle_command: Option<BundleCommands>,
+
+    #[clap(flatten)]
+    all_opts: AllOpts,
 }
 
-#[derive(Debug, Clone, Parser)]
+#[derive(Debug, Clone, Subcommand)]
 enum BundleCommands {
     /// Run all bundler steps.
     ///
@@ -47,13 +50,20 @@ enum BundleCommands {
 impl BundleCommand {
     /// Run a bundle subcommand
     pub(crate) fn run(&self) -> Result<()> {
-        match &self.bundle_command {
-            BundleCommands::All(command) => command.run(),
-            BundleCommands::Bucket(command) => command.run(),
-            BundleCommands::Deps(command) => command.run(),
-            BundleCommands::Css(command) => command.run(),
-            BundleCommands::Js(command) => command.run(),
-            BundleCommands::Html(command) => command.run(),
+        if let Some(bundle_command) = &self.bundle_command {
+            match bundle_command {
+                BundleCommands::All(command) => command.run(),
+                BundleCommands::Bucket(command) => command.run(),
+                BundleCommands::Deps(command) => command.run(),
+                BundleCommands::Css(command) => command.run(),
+                BundleCommands::Js(command) => command.run(),
+                BundleCommands::Html(command) => command.run(),
+            }
+        } else {
+            AllCommands {
+                opts: self.all_opts.clone(),
+            }
+            .run()
         }
     }
 }

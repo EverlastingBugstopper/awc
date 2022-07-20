@@ -1902,7 +1902,6 @@ dependencies = [
  "camino",
  "clap",
  "rayon",
- "walkdir",
 ]
 
 [[package]]

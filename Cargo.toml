@@ -1,7 +1,7 @@
 [workspace]
 members = [
-  "awc-cli", 
-  "awc-lib", 
+  "awc-cli",
+  "awc-lib",
   "awc-web",
   "xtask",
 ]
