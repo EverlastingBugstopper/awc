@@ -2,7 +2,7 @@ use apollo_compiler::ApolloCompiler;
 use miette::{JSONReportHandler, Report};
 use serde::{Deserialize, Serialize};
 
-use std::{borrow::Borrow, fmt::Display, io};
+use std::{borrow::Borrow, error::Error, io};
 
 /// Struct that validates GraphQL documents
 pub struct AwcCompiler {
@@ -73,13 +73,13 @@ pub struct AwcResult {
 }
 
 impl AwcResult {
-    pub fn error(message: impl Display) -> Self {
-        let err = AwcDiagnostic::error(&message);
+    pub fn error(source: impl Error) -> Self {
+        let err = AwcDiagnostic::error(&source);
         let code = err.code.clone().unwrap();
         Self {
             success: false,
             diagnostics: vec![err],
-            pretty: format!("{}\n{}", code, message),
+            pretty: format!("{}\n{}", code, source),
             error_count: 1,
             warn_count: 0,
             advice_count: 0,
@@ -106,10 +106,10 @@ pub struct AwcDiagnostic {
 }
 
 impl AwcDiagnostic {
-    fn error(message: impl Display) -> Self {
+    fn error(source: impl Error) -> Self {
         Self {
             code: Some("awc-diagnostic error".to_string()),
-            message: Some(message.to_string()),
+            message: Some(source.to_string()),
             severity: Some("error".to_string()),
             labels: None,
         }

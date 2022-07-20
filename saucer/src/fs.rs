@@ -3,7 +3,7 @@ use camino::Utf8Path;
 
 use crate::Log;
 
-use std::{fmt::Display, fs};
+use std::fs;
 
 #[derive(Default, Copy, Clone)]
 /// Interact with a file system
@@ -11,7 +11,7 @@ pub struct Fs {}
 
 impl Fs {
     /// reads a file from disk
-    pub fn read_file<P>(path: P, emoji: impl Display) -> Result<String>
+    pub fn read_file<P>(path: P, prefix: &str) -> Result<String>
     where
         P: AsRef<Utf8Path>,
     {
@@ -19,9 +19,9 @@ impl Fs {
         match fs::metadata(path) {
             Ok(metadata) => {
                 if metadata.is_file() {
-                    Log::info(format!("{}reading {} from disk", emoji, &path));
+                    Log::info(format!("{}reading {} from disk", prefix, &path));
                     let contents = fs::read_to_string(&path)
-                        .with_context(|| format!("{}could not read {}", emoji, &path))?;
+                        .with_context(|| format!("{}could not read {}", prefix, &path))?;
                     if contents.is_empty() {
                         Err(anyhow!("'{}' was empty", contents))
                     } else {
@@ -36,30 +36,30 @@ impl Fs {
     }
 
     /// writes a file to disk
-    pub fn write_file<P, C>(path: P, contents: C, emoji: impl Display) -> Result<()>
+    pub fn write_file<P, C>(path: P, contents: C, prefix: &str) -> Result<()>
     where
         P: AsRef<Utf8Path>,
         C: AsRef<[u8]>,
     {
         let path = path.as_ref();
-        Log::info(format!("{} writing {} to disk", emoji, &path));
+        Log::info(format!("{} writing {} to disk", prefix, &path));
         fs::write(&path, contents)
-            .with_context(|| format!("{}could not write {}", emoji, &path))?;
+            .with_context(|| format!("{}could not write {}", prefix, &path))?;
         Ok(())
     }
 
     /// creates a directory
-    pub fn create_dir<P>(path: P, emoji: impl Display)
+    pub fn create_dir<P>(path: P, prefix: &str)
     where
         P: AsRef<Utf8Path>,
     {
         let path = path.as_ref();
-        Log::info(format!("{}creating {} directory", emoji, &path));
+        Log::info(format!("{}creating {} directory", prefix, &path));
         let _ = fs::create_dir_all(path);
     }
 
     /// copies all contents from one directory to another
-    pub fn copy_dir_all<I, O>(in_dir: I, out_dir: O, emoji: &str) -> Result<()>
+    pub fn copy_dir_all<I, O>(in_dir: I, out_dir: O, prefix: &str) -> Result<()>
     where
         I: AsRef<Utf8Path>,
         O: AsRef<Utf8Path>,
@@ -68,7 +68,7 @@ impl Fs {
         let out_dir = out_dir.as_ref();
         Log::info(format!(
             "{} copying contents of {} to {}",
-            emoji, in_dir, out_dir
+            prefix, in_dir, out_dir
         ));
         for entry in in_dir
             .read_dir_utf8()
@@ -82,10 +82,10 @@ impl Fs {
                             let out_file = out_dir.join(entry_name);
                             Log::info(format!(
                                 "{} copying {} to {}",
-                                emoji, &entry_path, &out_file
+                                prefix, &entry_path, &out_file
                             ));
                             fs::copy(&entry_path, &out_file).with_context(|| {
-                                format!("{} could not copy {} to {}", &emoji, &in_dir, &out_file)
+                                format!("{} could not copy {} to {}", &prefix, &in_dir, &out_file)
                             })?;
                         }
                     } else if metadata.is_dir() {
@@ -94,9 +94,9 @@ impl Fs {
                                 let out_dir = out_dir.join(entry_name);
                                 Log::info(format!(
                                     "{} copying {} to {}",
-                                    emoji, &entry_path, &out_dir
+                                    prefix, &entry_path, &out_dir
                                 ));
-                                Fs::copy_dir_all(&entry_path, &out_dir, &emoji)?;
+                                Fs::copy_dir_all(&entry_path, &out_dir, &prefix)?;
                             }
                         }
                     }

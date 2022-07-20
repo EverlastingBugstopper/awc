@@ -1,7 +1,5 @@
 const EMOJI: &str = "💅 ";
 
-use clap::Parser;
-
 use saucer::{prelude::*, Process};
 
 #[derive(Default, Clone, Copy, Debug, Parser)]
@@ -16,11 +14,11 @@ impl CssCommand {
 
 impl Saucer for CssCommand {
     /// Runs tailwind to generate only the CSS we need
-    fn run(&self) -> Result<()> {
+    fn beam(&self) -> Result<()> {
         Process::new("npm", &["run", "build:css"]).run(EMOJI)
     }
 
-    fn emoji(&self) -> String {
+    fn prefix(&self) -> String {
         EMOJI.to_string()
     }
 

@@ -1,7 +1,5 @@
 const EMOJI: &str = "🧳 ";
 
-use clap::Parser;
-
 use saucer::{prelude::*, Process};
 
 #[derive(Default, Clone, Copy, Debug, Parser)]
@@ -16,12 +14,12 @@ impl JsCommand {
 
 impl Saucer for JsCommand {
     /// Transpiles TypeScript source to minified JavaScript
-    fn run(&self) -> Result<()> {
+    fn beam(&self) -> Result<()> {
         Process::new("npm", &["run", "build:js"]).run(EMOJI)
     }
 
-    fn emoji(&self) -> String {
-        "⚡ ".to_string()
+    fn prefix(&self) -> String {
+        EMOJI.to_string()
     }
 
     fn description(&self) -> String {

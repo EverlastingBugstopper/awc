@@ -44,7 +44,7 @@ impl Xtask {
         match &self.crate_command {
             CrateCommand::Web(command) => command.run(),
         }?;
-        Log::info(format!("🎉 Success in {}!", timer.stop()));
+        Log::info(format!("🎉 Succeeded in {}!", timer.stop()));
         Ok(())
     }
 }

@@ -29,7 +29,7 @@ impl WebCommand {
             None => AllCommands {
                 opts: self.all_opts.clone(),
             }
-            .run(),
+            .beam(),
         }
     }
 }

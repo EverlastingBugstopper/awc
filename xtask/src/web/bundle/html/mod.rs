@@ -32,7 +32,7 @@ pub(crate) struct HtmlCommandOpts {
 
 impl Saucer for HtmlCommand {
     /// Reads JSON from an awc.json and inserts it
-    fn run(&self) -> Result<()> {
+    fn beam(&self) -> Result<()> {
         let config = self.opts.get_config()?;
         let template = self.opts.read_template()?;
         let output = self.opts.templatize(&template, &config)?;
@@ -40,7 +40,7 @@ impl Saucer for HtmlCommand {
         Ok(())
     }
 
-    fn emoji(&self) -> String {
+    fn prefix(&self) -> String {
         EMOJI.to_string()
     }
 

@@ -52,18 +52,18 @@ impl BundleCommand {
     pub(crate) fn run(&self) -> Result<()> {
         if let Some(bundle_command) = &self.bundle_command {
             match bundle_command {
-                BundleCommands::All(command) => command.run(),
-                BundleCommands::Bucket(command) => command.run(),
-                BundleCommands::Deps(command) => command.run(),
-                BundleCommands::Css(command) => command.run(),
-                BundleCommands::Js(command) => command.run(),
-                BundleCommands::Html(command) => command.run(),
+                BundleCommands::All(command) => command.beam(),
+                BundleCommands::Bucket(command) => command.beam(),
+                BundleCommands::Deps(command) => command.beam(),
+                BundleCommands::Css(command) => command.beam(),
+                BundleCommands::Js(command) => command.beam(),
+                BundleCommands::Html(command) => command.beam(),
             }
         } else {
             AllCommands {
                 opts: self.all_opts.clone(),
             }
-            .run()
+            .beam()
         }
     }
 }

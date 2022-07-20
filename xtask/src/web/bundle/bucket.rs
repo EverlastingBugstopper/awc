@@ -19,11 +19,11 @@ pub(crate) struct BucketOpts {
 
 impl Saucer for BucketCommand {
     /// Copies everything in the bucket to /public
-    fn run(&self) -> Result<()> {
+    fn beam(&self) -> Result<()> {
         Fs::copy_dir_all(&self.opts.bucket_dir, &self.opts.public_dir, EMOJI)
     }
 
-    fn emoji(&self) -> String {
+    fn prefix(&self) -> String {
         EMOJI.to_string()
     }
 

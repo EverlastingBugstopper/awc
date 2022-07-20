@@ -1,7 +1,9 @@
+const STAGE_PREFIX: &str = "🛸 stage ";
+
 use crate::web::bundle::{
     BucketCommand, BucketOpts, CssCommand, DepsCommand, HtmlCommand, JsCommand,
 };
-use saucer::{prelude::*, SauceStage};
+use saucer::{prelude::*, ParallelSaucer};
 
 use super::HtmlCommandOpts;
 
@@ -30,18 +32,19 @@ impl Saucer for AllCommands {
     }
 
     /// Runs all bundle steps, parallelizing where possible
-    fn run(&self) -> Result<()> {
+    fn beam(&self) -> Result<()> {
         let total_stages = 3;
-        let mut current_stage = 1;
         if self.opts.skip_node_deps {
-            self.html_and_bucket(current_stage, total_stages).run()?;
+            self.html_and_bucket(1, total_stages).beam()?;
         } else {
-            self.deps_and_html_and_bucket(current_stage, total_stages)
-                .run()?;
+            self.deps_and_html_and_bucket(1, total_stages).beam()?;
         }
-        current_stage += 2;
-        self.css_and_js(current_stage, total_stages).run()?;
+        self.css_and_js(3, total_stages).beam()?;
         Ok(())
+    }
+
+    fn prefix(&self) -> String {
+        STAGE_PREFIX.to_string()
     }
 }
 
@@ -50,12 +53,13 @@ impl AllCommands {
         &self,
         current_stage: usize,
         total_stages: usize,
-    ) -> SauceStage<SauceStage<HtmlCommand, BucketCommand>, DepsCommand> {
-        SauceStage::new(
-            current_stage,
-            total_stages,
-            self.html_and_bucket(current_stage + 1, total_stages),
+    ) -> ParallelSaucer<ParallelSaucer<HtmlCommand, BucketCommand>, DepsCommand> {
+        ParallelSaucer::new(
+            self.html_and_bucket(current_stage, total_stages),
             DepsCommand::new(),
+            &self.prefix(),
+            current_stage + 1,
+            total_stages,
         )
     }
 
@@ -63,16 +67,17 @@ impl AllCommands {
         &self,
         current_stage: usize,
         total_stages: usize,
-    ) -> SauceStage<HtmlCommand, BucketCommand> {
-        SauceStage::new(
-            current_stage,
-            total_stages,
+    ) -> ParallelSaucer<HtmlCommand, BucketCommand> {
+        ParallelSaucer::new(
             HtmlCommand {
                 opts: self.opts.html_opts.clone(),
             },
             BucketCommand {
                 opts: self.opts.bucket_opts.clone(),
             },
+            &self.prefix(),
+            current_stage,
+            total_stages,
         )
     }
 
@@ -80,12 +85,13 @@ impl AllCommands {
         &self,
         current_stage: usize,
         total_stages: usize,
-    ) -> SauceStage<CssCommand, JsCommand> {
-        SauceStage::new(
-            current_stage,
-            total_stages,
+    ) -> ParallelSaucer<CssCommand, JsCommand> {
+        ParallelSaucer::new(
             CssCommand::new(),
             JsCommand::new(),
+            &self.prefix(),
+            current_stage,
+            total_stages,
         )
     }
 }

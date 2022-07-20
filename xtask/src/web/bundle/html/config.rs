@@ -1,4 +1,4 @@
-use std::{env, fmt::Display};
+use std::env;
 
 use saucer::{Context, Fs, Log, Result, Utf8Path, Utf8PathBuf};
 use serde::{Deserialize, Serialize};
@@ -15,7 +15,7 @@ pub(crate) struct Config {
 
 impl Config {
     /// Read an awc.json from disk
-    pub(crate) fn read<P>(path: Option<P>, emoji: impl Display) -> Result<Self>
+    pub(crate) fn read<P>(path: Option<P>, prefix: &str) -> Result<Self>
     where
         P: AsRef<Utf8Path>,
     {
@@ -24,25 +24,25 @@ impl Config {
         } else {
             Self::default_path().into()
         };
-        let contents = Fs::read_file(&path, &emoji).context("Could not read awc.json")?;
+        let contents = Fs::read_file(&path, &prefix).context("Could not read awc.json")?;
         let config: Self = serde_json::from_str(&contents)
-            .with_context(|| format!("{} invalid config at {}", emoji, &path))?;
+            .with_context(|| format!("{} invalid config at {}", prefix, &path))?;
         Ok(config)
     }
 
     /// Get JSON of config
-    pub(crate) fn json(&self, emoji: impl Display) -> Result<Value> {
+    pub(crate) fn json(&self, prefix: &str) -> Result<Value> {
         let json = json!({
           "BASE_URL": &self.base_url,
-          "PLACEHOLDER_SCHEMA": &self.placeholder_schema(&emoji)?
+          "PLACEHOLDER_SCHEMA": &self.placeholder_schema(&prefix)?
         });
-        Log::info(format!("{} {}", emoji, &json));
+        Log::info(format!("{} {}", prefix, &json));
         Ok(json)
     }
 
     /// Find placeholder schema
-    pub(crate) fn placeholder_schema(&self, emoji: impl Display) -> Result<String> {
-        let contents = Fs::read_file(&self.placeholder_schema_path, &emoji).context("Could not read contents of schema file designated in awc.json['placeholder_schema_path']")?;
+    pub(crate) fn placeholder_schema(&self, prefix: &str) -> Result<String> {
+        let contents = Fs::read_file(&self.placeholder_schema_path, &prefix).context("Could not read contents of schema file designated in awc.json['placeholder_schema_path']")?;
         Ok(contents)
     }
 
