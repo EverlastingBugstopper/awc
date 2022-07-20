@@ -1,4 +1,4 @@
-use crate::{Context, Log, Result, Saucer, Timer};
+use crate::{Context, Logger, Result, Saucer, Timer};
 
 #[derive(Debug, Clone)]
 pub struct ParallelSaucer<F, S>
@@ -38,7 +38,7 @@ where
         let timer = Timer::start();
         self.join()?;
         let elapsed = timer.stop();
-        Log::info(format!(
+        Logger::info(format!(
             "{}{} completed in {}",
             self.prefix(),
             self.description(),
@@ -49,7 +49,7 @@ where
 
     fn description(&self) -> String {
         let mut first = format!("{}{}", self.first.prefix(), self.first.description());
-        let mut second = format!("{} {}", self.second.prefix(), self.second.description());
+        let mut second = format!("{}{}", self.second.prefix(), self.second.description());
 
         let is_first_par_saucer = first.contains(&self.prefix);
         let is_second_par_saucer = second.contains(&self.prefix);

@@ -1,6 +1,6 @@
 use std::env;
 
-use saucer::{Context, Fs, Log, Result, Utf8Path, Utf8PathBuf};
+use saucer::{Context, Fs, Logger, Result, Utf8Path, Utf8PathBuf};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
@@ -26,7 +26,7 @@ impl Config {
         };
         let contents = Fs::read_file(&path, &prefix).context("Could not read awc.json")?;
         let config: Self = serde_json::from_str(&contents)
-            .with_context(|| format!("{} invalid config at {}", prefix, &path))?;
+            .with_context(|| format!("{}invalid config at {}", prefix, &path))?;
         Ok(config)
     }
 
@@ -36,7 +36,7 @@ impl Config {
           "BASE_URL": &self.base_url,
           "PLACEHOLDER_SCHEMA": &self.placeholder_schema(&prefix)?
         });
-        Log::info(format!("{} {}", prefix, &json));
+        Logger::info(format!("{}{}", prefix, &json));
         Ok(json)
     }
 

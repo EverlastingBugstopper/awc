@@ -7,7 +7,7 @@ use std::{
 };
 
 use awc::{AwcCompiler, AwcResult};
-use saucer::{anyhow, Fs, Log, Parser, Result};
+use saucer::{anyhow, Fs, Logger, Parser, Result};
 
 use notify::{watcher, DebouncedEvent, RecursiveMode, Watcher};
 
@@ -69,9 +69,9 @@ impl LintCommand {
     fn print_lint(&self, proposed_schema: &str) {
         let diagnostics = self.lint(proposed_schema);
         if self.json {
-            Log::stdout(diagnostics.json())
+            Logger::stdout(diagnostics.json())
         } else {
-            Log::info(diagnostics.pretty())
+            Logger::info(diagnostics.pretty())
         }
     }
 
@@ -85,18 +85,18 @@ impl LintCommand {
             let mut watcher = watcher(broadcaster, Duration::from_secs(1))?;
             watcher.watch(&path, RecursiveMode::NonRecursive)?;
 
-            Log::info(format!("👀 Watching {} for changes", path));
+            Logger::info(format!("👀 Watching {} for changes", path));
             loop {
                 match listener.recv() {
                     Ok(event) => match &event {
                         DebouncedEvent::NoticeWrite(_) => {
-                            Log::info(format!("🔃 Change detected in {}", &path))
+                            Logger::info(format!("🔃 Change detected in {}", &path))
                         }
                         DebouncedEvent::Write(_) => {
                             match Fs::read_file(&path, READ_EMOJI) {
                                 Ok(contents) => self.print_lint(&contents),
                                 Err(e) => {
-                                    Log::error(
+                                    Logger::error(
                                         format!("Could not read {} from disk", &path),
                                         Some(anyhow!("{}", e)),
                                     );
@@ -104,14 +104,14 @@ impl LintCommand {
                             };
                         }
                         DebouncedEvent::Error(e, _) => {
-                            Log::error(
+                            Logger::error(
                                 format!("unknown error while watching {}", &path),
                                 Some(anyhow!("{}", e)),
                             );
                         }
                         _ => {}
                     },
-                    Err(e) => Log::error(
+                    Err(e) => Logger::error(
                         format!("unknown error while watching {}", &path),
                         Some(anyhow!(e)),
                     ),

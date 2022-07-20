@@ -1,4 +1,4 @@
-const EMOJI: &str = "🪣 ";
+const EMOJI: &str = "🪣  ";
 
 use saucer::{prelude::*, Fs, Utf8PathBuf};
 

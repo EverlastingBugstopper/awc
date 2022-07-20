@@ -1,12 +1,12 @@
 mod fs;
-mod log;
+mod logger;
 mod process;
 mod saucer;
 mod timer;
 
 pub mod prelude;
 pub use fs::*;
-pub use log::*;
+pub use logger::*;
 pub use process::*;
 pub use saucer::*;
 pub use timer::*;

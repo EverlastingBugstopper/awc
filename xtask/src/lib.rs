@@ -15,7 +15,7 @@ mod web;
 use std::{env, str::FromStr};
 
 pub use saucer::Result;
-use saucer::{prelude::*, Log, Timer, Utf8PathBuf};
+use saucer::{prelude::*, Logger, Timer, Utf8PathBuf};
 
 use web::WebCommand;
 
@@ -44,7 +44,7 @@ impl Xtask {
         match &self.crate_command {
             CrateCommand::Web(command) => command.run(),
         }?;
-        Log::info(format!("🎉 Succeeded in {}!", timer.stop()));
+        Logger::info(format!("🎉 Succeeded in {}!", timer.stop()));
         Ok(())
     }
 }

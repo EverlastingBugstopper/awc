@@ -2,7 +2,7 @@ use std::{process::Command, str};
 
 use anyhow::{anyhow, Result};
 
-use super::Log;
+use super::Logger;
 
 pub struct Process {
     bin: String,
@@ -38,23 +38,23 @@ impl Process {
 
     /// Run a `Process` and print its output
     pub fn run(&self, prefix: &str) -> Result<()> {
-        Log::info(format!("{} {}", prefix, &self.description));
+        Logger::info(format!("{}{}", prefix, &self.description));
         let output = Command::new(&self.bin).args(&self.args).output()?;
         if let Ok(stdout) = str::from_utf8(&output.stdout) {
             for line in stdout.lines() {
-                Log::info(format!("{} {}", prefix, line));
+                Logger::info(format!("{}{}", prefix, line));
             }
         }
         if let Ok(stderr) = str::from_utf8(&output.stderr) {
             for line in stderr.lines() {
-                Log::info(format!("{} {}", prefix, line));
+                Logger::info(format!("{}{}", prefix, line));
             }
         }
         if output.status.success() {
             Ok(())
         } else {
             Err(anyhow!(
-                "{} {} failed with status {}",
+                "{}{} failed with status {}",
                 prefix,
                 &self.description,
                 output.status
