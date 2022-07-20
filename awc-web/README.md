@@ -18,7 +18,7 @@ All of this is done under the hood with `cargo xtask`. Check out `cargo xtask we
 
 ## Configuring
 
-`NODE_ENV="production"` sources Handlebars values from `awc.prod.json` while everything else uses `awc.dev.json`. The `browser` folder is front-end source code that is transpiled by various tools. Tailwind for CSS, swc for TS->JS, and the handlebars crate for HTML substition. `xtask` also takes care of running steps in parallel where it can.
+`AWC_ENV="production"` sources Handlebars values from `awc.prod.json` while everything else uses `awc.dev.json`. The `browser` folder is front-end source code that is transpiled by various tools. Tailwind for CSS, swc for TS->JS, and the handlebars crate for HTML substition. `xtask` also takes care of running steps in parallel where it can.
 
 ## Deploying
 

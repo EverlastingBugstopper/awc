@@ -31,7 +31,7 @@ FROM debian:11.3-slim AS volta-installer
 
 ENV VOLTA_VERSION="v1.0.8"
 ENV VOLTA_HOME="/volta"
-ENV PATH="$VOLTA_HOME/bin:$PATH"	
+ENV PATH="$VOLTA_HOME/bin:$PATH"
 
 RUN set -eux; \
 		export DEBIAN_FRONTEND=noninteractive; \
@@ -57,7 +57,7 @@ FROM chef AS xtask-builder
 
 ENV VOLTA_VERSION="v1.0.8"
 ENV VOLTA_HOME="/volta"
-ENV PATH="$VOLTA_HOME/bin:$PATH"	
+ENV PATH="$VOLTA_HOME/bin:$PATH"
 ENV IS_DOCKER=1
 
 COPY --from=volta-installer $VOLTA_HOME $VOLTA_HOME
@@ -98,13 +98,15 @@ RUN set -eux; \
 
 COPY . .
 
+ENV AWC_ENV "production"
+
+RUN set -eux; \
+		./target/release/xtask web bundle all; \
+		echo "Built static assets!"
+
 RUN set -eux; \
 		cargo build -p awc-web --release; \
 		echo "Compiled 'awc-web'!"
-
-RUN set -eux; \
-		NODE_ENV="production" ./target/release/xtask web bundle all; \
-		echo "Built static assets!"
 
 ################################################################################
 FROM debian:11.3-slim

@@ -48,7 +48,7 @@ impl Config {
 
     /// Get the default awc.json path if one is not provided
     fn default_path() -> &'static Utf8Path {
-        match env::var("NODE_ENV").as_deref() {
+        match env::var("AWC_ENV").as_deref() {
             Ok("production") => "./awc-web/awc.prod.json",
             _ => "./awc-web/awc.dev.json",
         }
