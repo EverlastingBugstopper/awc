@@ -1,6 +1,4 @@
-const EMOJI: &str = "⬇️ ";
-
-use clap::Parser;
+const EMOJI: &str = "⬇️  ";
 
 use saucer::{prelude::*, Process};
 
@@ -16,11 +14,11 @@ impl DepsCommand {
 
 impl Saucer for DepsCommand {
     /// Installs node dependencies
-    fn run(&self) -> Result<()> {
+    fn beam(&self) -> Result<()> {
         Process::new("npm", &["install"]).run(EMOJI)
     }
 
-    fn emoji(&self) -> String {
+    fn prefix(&self) -> String {
         EMOJI.to_string()
     }
 

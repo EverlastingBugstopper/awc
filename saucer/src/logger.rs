@@ -11,32 +11,27 @@ use std::fmt::Debug;
 use anyhow::{anyhow, Error};
 
 /// Log information to stderr
-pub struct Log {}
+pub struct Logger {}
 
-impl Log {
-    /// eprint info
+impl Logger {
+    /// log info
     pub fn info(message: impl Display) {
-        let lines: Vec<String> = message.to_string().lines().map(|l| l.to_string()).collect();
-        let num_lines = lines.len();
-        if num_lines > 1 {
-            eprintln!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        }
-        for line in lines {
-            eprintln!("{}", line);
-        }
-        if num_lines > 1 {
-            eprintln!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        }
+        log::info!("{}", message)
     }
 
-    /// eprint error
+    /// log debug
+    pub fn debug(message: impl Debug) {
+        log::debug!("{:?}", message)
+    }
+
+    /// log an error with a message
     pub fn error(message: impl Display, original_error: Option<Error>) {
         let err = if let Some(original_error) = original_error {
             anyhow!("{}", message).context(original_error)
         } else {
             anyhow!("{}", message)
         };
-        eprintln!("{}{:?}", ERROR_EMOJI, err);
+        log::error!("{}{:?}", ERROR_EMOJI, err);
     }
 
     /// print info
@@ -47,7 +42,7 @@ impl Log {
     /// eprint debug
     #[cfg(debug_assertions)]
     #[allow(dead_code)]
-    pub fn debug(message: impl Debug) {
+    pub fn quick_debug(message: impl Debug) {
         eprintln!("{}{:#?}", DEBUG_EMOJI, message);
     }
 }

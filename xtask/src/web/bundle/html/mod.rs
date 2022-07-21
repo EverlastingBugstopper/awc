@@ -4,7 +4,7 @@ mod config;
 use config::Config;
 
 use handlebars::Handlebars;
-use saucer::{prelude::*, Fs, Log, Utf8PathBuf};
+use saucer::{prelude::*, Fs, Logger, Utf8PathBuf};
 use std::str;
 
 #[derive(Clone, Debug, Parser)]
@@ -32,7 +32,7 @@ pub(crate) struct HtmlCommandOpts {
 
 impl Saucer for HtmlCommand {
     /// Reads JSON from an awc.json and inserts it
-    fn run(&self) -> Result<()> {
+    fn beam(&self) -> Result<()> {
         let config = self.opts.get_config()?;
         let template = self.opts.read_template()?;
         let output = self.opts.templatize(&template, &config)?;
@@ -40,7 +40,7 @@ impl Saucer for HtmlCommand {
         Ok(())
     }
 
-    fn emoji(&self) -> String {
+    fn prefix(&self) -> String {
         EMOJI.to_string()
     }
 
@@ -67,7 +67,7 @@ impl HtmlCommandOpts {
     where
         C: AsRef<[u8]>,
     {
-        Log::info(format!("{} templatizing from an awc.json file", EMOJI));
+        Logger::info(format!("{}templatizing from an awc.json file", EMOJI));
         let data = config.json(EMOJI)?;
         let compiled_html = Handlebars::new().render_template(
             str::from_utf8(contents.as_ref()).context("template was not valid UTF-8")?,
@@ -81,7 +81,7 @@ impl HtmlCommandOpts {
     where
         C: AsRef<[u8]>,
     {
-        Fs::create_dir(Self::relative_dir("public"), EMOJI);
+        Fs::create_dir_all(Self::relative_dir("public"), EMOJI)?;
         Fs::write_file(&self.public_file, contents, EMOJI)
             .context("Could not write templatized HTML")?;
         Ok(())
