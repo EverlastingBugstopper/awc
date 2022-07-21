@@ -127,7 +127,7 @@ class GraphQLValidator {
         inner += "</div>"
         pretties.push(inner);
       }
-      this.output.handle.innerHTML = pretties.join("");
+      this.output.handle.innerHTML = `${pretties.join("")}\n${json["message"]}`;
     } else {
       this.output.handle.innerHTML = `<code class="text-success center">${json["pretty"]}</span>`
     }

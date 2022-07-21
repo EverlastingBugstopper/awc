@@ -352,6 +352,7 @@ dependencies = [
  "buildstructor",
  "log",
  "miette",
+ "saucer",
  "serde",
  "serde_json",
 ]
@@ -362,6 +363,8 @@ version = "0.1.0"
 dependencies = [
  "awc",
  "clap",
+ "env_logger",
+ "log",
  "notify",
  "saucer",
 ]

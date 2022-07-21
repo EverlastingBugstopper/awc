@@ -30,7 +30,15 @@ impl AwcRules {
     /// Whether or not an [`ApolloDiagnostic`] constitutes a failure,
     /// configured by setting [`ApolloDiagnostic::fail_level`]
     pub fn is_ok(&self, diagnostic_kind: &AwcDiagnosticKind) -> bool {
-        diagnostic_kind.eq(&self.fail_level)
+        match (diagnostic_kind, &self.fail_level) {
+            (AwcDiagnosticKind::Error, _) => false,
+            (AwcDiagnosticKind::Warning, AwcDiagnosticKind::Error)
+            | (AwcDiagnosticKind::Warning, AwcDiagnosticKind::Warning) => false,
+            (AwcDiagnosticKind::Advice, AwcDiagnosticKind::Advice)
+            | (AwcDiagnosticKind::Advice, AwcDiagnosticKind::Warning)
+            | (AwcDiagnosticKind::Advice, AwcDiagnosticKind::Error) => false,
+            _ => true,
+        }
     }
 
     /// Whether or not an [`ApolloDiagnostic`] should be emitted,
@@ -40,7 +48,7 @@ impl AwcRules {
         match diagnostic_kind {
             AwcDiagnosticKind::Advice => self.ignore_advice,
             AwcDiagnosticKind::Warning => self.ignore_warnings,
-            _ => true,
+            _ => false,
         }
     }
 }

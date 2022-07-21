@@ -7,7 +7,9 @@ publish = false
 [dependencies]
 awc = { path = "../awc-lib" }
 clap = { version = "3", features = ["std", "derive"] }
+env_logger = "0.9"
 notify = "4"
+log = "0.4"
 saucer = { path = "../saucer" }
 
 [[bin]]

@@ -1,5 +1,6 @@
 use apollo_compiler::ApolloCompiler;
 use buildstructor::buildstructor;
+use saucer::Timer;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
@@ -41,14 +42,18 @@ impl AwcCompiler {
     /// Consume the [`ApolloCompiler`] and produce an `AwcResult`
     /// based on the rules defined by [`AwcRules`]
     pub fn validate(&self) -> AwcResult {
+        let timer = Timer::start();
         let mut error_count = 0;
         let mut warn_count = 0;
         let mut advice_count = 0;
         let mut diagnostics = Vec::new();
         let mut pretty = String::new();
         let mut success = true;
-
-        self.compiler.validate().iter().for_each(|diagnostic| {
+        log::debug!("started validation");
+        let raw_diagnostics = self.compiler.validate();
+        log::debug!("completed validation");
+        let elapsed = timer.stop();
+        raw_diagnostics.iter().for_each(|diagnostic| {
             let diagnostic_kind = AwcDiagnosticKind::from(diagnostic);
             log::debug!("{:?}", &diagnostic_kind);
             if !self.rules.is_ok(&diagnostic_kind) {
@@ -73,12 +78,46 @@ impl AwcCompiler {
                     AwcDiagnostic::try_from(diagnostic.report())
                         .unwrap_or_else(|e| AwcDiagnostic::error(e)),
                 );
+            } else {
+                log::debug!("ignored {:?}", diagnostic);
             }
         });
 
-        if pretty.is_empty() {
-            pretty.push_str("🎉 Your GraphQL is looking great!");
+        if !pretty.is_empty() {
+            pretty.push_str("\n");
         }
+        let mut message = "".to_string();
+        if success {
+            message.push_str("🎉 Your GraphQL is looking great! ");
+        } else {
+            message.push_str("❌ ");
+        }
+        message.push_str(
+            match (error_count > 0, warn_count > 0, advice_count > 0) {
+                (true, true, true) => format!(
+                    "Found {} errors, {} warnings, and {} advice in {}.",
+                    error_count, warn_count, advice_count, elapsed
+                ),
+                (true, true, false) => format!(
+                    "Found {} errors and {} warnings in {}.",
+                    error_count, warn_count, elapsed
+                ),
+                (true, false, false) => format!("Found {} errors in {}.", error_count, elapsed),
+                (false, true, false) => format!("Found {} warnings in {}.", warn_count, elapsed),
+                (false, false, true) => format!("Found {} advice in {}.", advice_count, elapsed),
+                (false, true, true) => format!(
+                    "Found {} warnings and {} advice in {}.",
+                    warn_count, advice_count, elapsed
+                ),
+                (false, false, false) => format!("Found no problems in {}.", elapsed),
+                (true, false, true) => format!(
+                    "Found {} errors and {} advice in {}.",
+                    error_count, advice_count, elapsed
+                ),
+            }
+            .as_str(),
+        );
+        pretty.push_str(&message);
 
         AwcResult {
             error_count,
@@ -87,19 +126,23 @@ impl AwcCompiler {
             diagnostics,
             pretty,
             success,
+            message,
+            elapsed: Some(elapsed),
         }
     }
 }
 
-#[derive(Serialize, Deserialize)]
 /// [`AwcResult`] is emitted when an [`ApolloCompiler`] is consumed in [`AwcCompiler::validate`]
+#[derive(Serialize, Deserialize)]
 pub struct AwcResult {
     success: bool,
+    message: String,
     diagnostics: Vec<AwcDiagnostic>,
     pretty: String,
     error_count: usize,
     warn_count: usize,
     advice_count: usize,
+    elapsed: Option<String>,
 }
 
 impl AwcResult {
@@ -108,12 +151,14 @@ impl AwcResult {
         let err = AwcDiagnostic::error(&message);
         let code = err.code.clone().unwrap();
         Self {
+            message: message.to_string(),
             success: false,
             diagnostics: vec![err],
             pretty: format!("{}\n{}", code, message),
             error_count: 1,
             warn_count: 0,
             advice_count: 0,
+            elapsed: None,
         }
     }
 
