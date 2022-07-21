@@ -1,4 +1,4 @@
-use awc::AwcCompiler;
+use awc::{AwcCompiler, AwcDiagnosticKind};
 use tide::{log, Request};
 
 const IS_DOCKER: Option<&str> = option_env!("IS_DOCKER");
@@ -29,6 +29,12 @@ async fn main() -> tide::Result<()> {
 
 async fn validate(mut req: Request<()>) -> tide::Result {
     let graphql = req.body_string().await?;
-    let awc = AwcCompiler::new(&graphql, false).run();
-    Ok(awc.json().into())
+    let awc = AwcCompiler::builder()
+        .input(graphql)
+        .fail_level(AwcDiagnosticKind::Error)
+        .ignore_warnings(false)
+        .ignore_advice(false)
+        .build()
+        .validate();
+    Ok(awc.json().try_into()?)
 }

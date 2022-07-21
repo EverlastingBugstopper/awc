@@ -6,7 +6,8 @@ use std::{
     time::Duration,
 };
 
-use awc::{AwcCompiler, AwcResult};
+use awc::{AwcCompiler, AwcDiagnosticKind, AwcResult};
+use clap::clap_derive::ArgEnum;
 use saucer::{anyhow, Fs, Log, Parser, Result};
 
 use notify::{watcher, DebouncedEvent, RecursiveMode, Watcher};
@@ -30,11 +31,33 @@ pub struct LintCommand {
     watch: bool,
 
     /// Configures whether to fail if there are validation warnings.
+    #[clap(long, value_enum, default_value_t)]
+    fail_on: FailLevel,
+
+    /// Configures whether to skip warnings.
     #[clap(long)]
-    strict: bool,
+    skip_warnings: bool,
+
+    /// Configures whether to skip advice.
+    #[clap(long)]
+    skip_advice: bool,
+}
+
+#[derive(Default, Debug, Clone, ArgEnum)]
+enum FailLevel {
+    #[default]
+    /// An `error` diagnostic, something went wrong.
+    Error,
+
+    /// A `warning` diagnostic, something you might want to know.
+    Warning,
+
+    /// An `advice` diagnostic, a helpful tip.
+    Advice,
 }
 
 impl LintCommand {
+    /// Run the [`LintCommand`]
     pub fn run(&self) -> Result<()> {
         if !self.watch {
             let (proposed_schema, _) = self.get_schema_and_maybe_path()?;
@@ -63,7 +86,17 @@ impl LintCommand {
     }
 
     fn lint(&self, proposed_schema: &str) -> AwcResult {
-        AwcCompiler::new(&proposed_schema, self.strict).run()
+        AwcCompiler::new(
+            proposed_schema.to_string(),
+            self.skip_warnings,
+            self.skip_advice,
+            match self.fail_on {
+                FailLevel::Advice => AwcDiagnosticKind::Advice,
+                FailLevel::Error => AwcDiagnosticKind::Error,
+                FailLevel::Warning => AwcDiagnosticKind::Warning,
+            },
+        )
+        .validate()
     }
 
     fn print_lint(&self, proposed_schema: &str) {
