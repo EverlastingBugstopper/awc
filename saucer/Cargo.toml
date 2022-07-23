@@ -10,6 +10,9 @@ name = "saucer"
 [dependencies]
 rayon = "1"
 anyhow = "1"
+buildstructor = "0.3"
 camino = { version = "1", features = ["serde1"] }
+console = "0.15"
 clap = { version = "3", features = ["std", "derive", "env"] }
 log = "0.4"
+which = "4"

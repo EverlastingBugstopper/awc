@@ -15,7 +15,9 @@ impl DepsCommand {
 impl Saucer for DepsCommand {
     /// Installs node dependencies
     fn beam(&self) -> Result<()> {
-        Process::new("npm", &["install"]).run(EMOJI)
+        let process = Process::builder().bin("npm").args(&["install"]).build()?;
+        process.runner().prefix(EMOJI.to_string()).run()?;
+        Ok(())
     }
 
     fn prefix(&self) -> String {

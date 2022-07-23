@@ -55,14 +55,9 @@ RUN set -eux; \
 # layer that builds xtask
 FROM chef AS xtask-builder
 
-ENV VOLTA_VERSION="v1.0.8"
-ENV VOLTA_HOME="/volta"
-ENV PATH="$VOLTA_HOME/bin:$PATH"
-ENV IS_DOCKER=1
-
-COPY --from=volta-installer $VOLTA_HOME $VOLTA_HOME
-
 WORKDIR /app
+VOLUME ["/target"]
+
 RUN set -eux; \
 		export DEBIAN_FRONTEND=noninteractive; \
 	  apt update; \
@@ -86,9 +81,26 @@ RUN set -eux; \
 		cargo build -p xtask --release; \
 		echo "Compiled 'xtask'!"
 
+# layer that builds awc-web
 FROM chef as awc-web-builder
 
 WORKDIR /app
+VOLUME ["/target"]
+VOLUME ["/node_modules"]
+VOLUME ["/awc-web/public/"]
+
+
+ENV VOLTA_VERSION="v1.0.8"
+ENV VOLTA_HOME="/volta"
+ENV PATH="$VOLTA_HOME/bin:$PATH"
+ENV IS_DOCKER=1
+
+COPY --from=volta-installer $VOLTA_HOME $VOLTA_HOME
+
+RUN set -eux; \
+		which node; \
+		which npm; \
+		echo "Installed node/npm!"
 
 COPY --from=web-planner /app/recipe.web.json ./recipe.web.json
 
@@ -101,7 +113,7 @@ COPY . .
 ENV AWC_ENV "production"
 
 RUN set -eux; \
-		./target/release/xtask web bundle all; \
+		./target/release/xtask web; \
 		echo "Built static assets!"
 
 RUN set -eux; \
@@ -109,9 +121,13 @@ RUN set -eux; \
 		echo "Compiled 'awc-web'!"
 
 ################################################################################
-FROM debian:11.3-slim
+# layer that runs our application
+FROM debian:11.3-slim AS awc-web
 
+COPY --from=awc-web-builder /app/target/release/awc-web /awc-bin
+VOLUME ["/awc-web/public/"]
 
+WORKDIR /app
 RUN set -eux; \
 		export DEBIAN_FRONTEND=noninteractive; \
 	  apt update; \
@@ -121,15 +137,8 @@ RUN set -eux; \
 		rm -rf /var/lib/{apt,dpkg,cache,log}/; \
 		echo "Installed base utils!"
 
-WORKDIR /app
-
-# keep the public directory in the same place so that relative paths
-# in awc.prod.json still look correct in source code
-RUN set -eux; \
-		mkdir ./awc-web
+RUN ls -la /awc-web/public/*
 
 CMD ["./awc-bin"]
 EXPOSE 8080
 
-COPY --from=awc-web-builder /app/target/release/awc-web ./awc-bin
-COPY --from=awc-web-builder /app/awc-web/public ./awc-web/public

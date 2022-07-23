@@ -20,6 +20,7 @@ impl Logger {
     }
 
     /// log debug
+    #[cfg(debug_assertions)]
     pub fn debug(message: impl Debug) {
         log::debug!("{:?}", message)
     }

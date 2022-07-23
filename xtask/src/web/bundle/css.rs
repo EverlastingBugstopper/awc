@@ -15,7 +15,12 @@ impl CssCommand {
 impl Saucer for CssCommand {
     /// Runs tailwind to generate only the CSS we need
     fn beam(&self) -> Result<()> {
-        Process::new("npm", &["run", "build:css"]).run(EMOJI)
+        let process = Process::builder()
+            .bin("npm")
+            .args(&["run", "build:css"])
+            .build()?;
+        process.runner().prefix(EMOJI.to_string()).run()?;
+        Ok(())
     }
 
     fn prefix(&self) -> String {
