@@ -22,11 +22,11 @@ pub(crate) struct HtmlCommandOpts {
     awc_config: Option<Utf8PathBuf>,
 
     /// Path to a templated HTML file
-    #[clap(long, default_value_t = HtmlCommandOpts::relative_dir("src/browser/template.html"))]
+    #[clap(long, default_value_t = HtmlCommandOpts::relative_dir("browser/template.html"))]
     template_file: Utf8PathBuf,
 
     /// Destination path for templatized HTML
-    #[clap(long, default_value_t = HtmlCommandOpts::relative_dir("public/index.html"))]
+    #[clap(long, default_value_t = HtmlCommandOpts::relative_dir("server/public/index.html"))]
     public_file: Utf8PathBuf,
 }
 
@@ -81,13 +81,13 @@ impl HtmlCommandOpts {
     where
         C: AsRef<[u8]>,
     {
-        Fs::create_dir_all(Self::relative_dir("public"), EMOJI)?;
+        Fs::create_dir_all(Self::relative_dir("server/public"), EMOJI)?;
         Fs::write_file(&self.public_file, contents, EMOJI)
             .context("Could not write templatized HTML")?;
         Ok(())
     }
 
     fn relative_dir(path: &str) -> Utf8PathBuf {
-        crate::relative_dir("awc-web").join(path)
+        crate::relative_dir("awc-web/src").join(path)
     }
 }

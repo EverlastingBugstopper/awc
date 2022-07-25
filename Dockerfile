@@ -56,7 +56,6 @@ RUN set -eux; \
 FROM chef AS xtask-builder
 
 WORKDIR /app
-VOLUME ["/target"]
 
 RUN set -eux; \
 		export DEBIAN_FRONTEND=noninteractive; \
@@ -82,13 +81,9 @@ RUN set -eux; \
 		echo "Compiled 'xtask'!"
 
 # layer that builds awc-web
-FROM chef as awc-web-builder
+FROM chef AS awc-web-builder
 
 WORKDIR /app
-VOLUME ["/target"]
-VOLUME ["/node_modules"]
-VOLUME ["/awc-web/public/"]
-
 
 ENV VOLTA_VERSION="v1.0.8"
 ENV VOLTA_HOME="/volta"
@@ -124,10 +119,17 @@ RUN set -eux; \
 # layer that runs our application
 FROM debian:11.3-slim AS awc-web
 
-COPY --from=awc-web-builder /app/target/release/awc-web /awc-bin
-VOLUME ["/awc-web/public/"]
-
 WORKDIR /app
+RUN set -eux; \
+	mkdir -p ./awc-web/src/server/public
+
+COPY --from=awc-web-builder /app/target/release/awc-web ./awc-bin
+COPY --from=awc-web-builder /app/awc-web/src/server/public/favicon.ico ./awc-web/src/server/public
+COPY --from=awc-web-builder /app/awc-web/src/server/public/index.css ./awc-web/src/server/public
+COPY --from=awc-web-builder /app/awc-web/src/server/public/index.html ./awc-web/src/server/public
+COPY --from=awc-web-builder /app/awc-web/src/server/public/index.js ./awc-web/src/server/public
+COPY --from=awc-web-builder /app/awc-web/src/server/public/index.js.map ./awc-web/src/server/public
+
 RUN set -eux; \
 		export DEBIAN_FRONTEND=noninteractive; \
 	  apt update; \
@@ -136,8 +138,6 @@ RUN set -eux; \
 		apt autoremove --yes; \
 		rm -rf /var/lib/{apt,dpkg,cache,log}/; \
 		echo "Installed base utils!"
-
-RUN ls -la /awc-web/public/*
 
 CMD ["./awc-bin"]
 EXPOSE 8080

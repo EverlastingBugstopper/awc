@@ -6,7 +6,7 @@ use std::{
     time::Duration,
 };
 
-use awc::{AwcCompiler, AwcDiagnosticKind, AwcResult};
+use awc::{AwcCompiler, AwcDiagnosticSeverity, AwcResult};
 use saucer::{anyhow, ArgEnum, Fs, Logger, Parser, Result};
 
 use notify::{watcher, DebouncedEvent, RecursiveMode, Watcher};
@@ -90,9 +90,9 @@ impl LintCommand {
             self.skip_warnings,
             self.skip_advice,
             match self.fail_on {
-                FailLevel::Advice => AwcDiagnosticKind::Advice,
-                FailLevel::Error => AwcDiagnosticKind::Error,
-                FailLevel::Warning => AwcDiagnosticKind::Warning,
+                FailLevel::Advice => AwcDiagnosticSeverity::Advice,
+                FailLevel::Error => AwcDiagnosticSeverity::Error,
+                FailLevel::Warning => AwcDiagnosticSeverity::Warning,
             },
         )
         .validate()

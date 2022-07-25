@@ -6,8 +6,8 @@
   "scripts": {
     "bundle": "cargo xtask web bundle all",
     "dev": "npm run docker:down && concurrently \"npm run dev:browser\" \"npm run dev:server\"",
-    "dev:browser": "cargo watch -w 'schemas' -w './awc-web' -w './xtask' -w './tailwind.config.js' -w './webpack.config.js' -w './package.json' -i './awc-web/public/*' -i './awc-web/src/server/*' -i 'node_modules/*' -i 'package-lock.json' -x 'xtask web bundle all'",
-    "dev:server": "cargo watch -w './xtask' -w './saucer' -w './awc-lib' -w './awc-web/src/server' -w './awc-web/Cargo.toml' -x 'run -p awc-web'",
+    "dev:browser": "cargo watch -w 'schemas' -w './awc-web' -w './awc-web/src/server/public' -w './xtask' -w './tailwind.config.js' -w './webpack.config.js' -w './package.json' -i './awc-web/src/server/*' -i 'node_modules/*' -i 'package-lock.json' -x 'xtask web bundle all'",
+    "dev:server": "cargo watch -w './xtask' -w './saucer' -w './awc-lib' -w './awc-web/src/server' -w './awc-web/src/browser' -w './awc-web/Cargo.toml' -x 'run -p awc-web'",
     "docker:predeploy": "npm run docker:build && npm run docker:up-detached",
     "docker:build": "docker build -t awc .",
     "docker:up": "npm run docker:down && docker run --init --publish 8080:8080 -t awc:latest",
@@ -18,7 +18,7 @@
     "docker:prune": "docker system prune -f",
     "deploy": "flyctl deploy",
     "build:js": "webpack",
-    "build:css": "tailwindcss -i ./awc-web/src/browser/index.css -o ./awc-web/public/index.css"
+    "build:css": "tailwindcss -i ./awc-web/src/browser/index.css -o ./awc-web/src/server/public/index.css"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "source-map-loader": "^4.0.0",
     "swc-loader": "^0.2.3",
     "tailwindcss": "^3.1.6",
+    "vue-prism-editor": "^1.3.0",
     "webpack": "^5.73.0",
     "webpack-cli": "^4.10.0"
   },

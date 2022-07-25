@@ -6,7 +6,7 @@ module.exports = {
   mode: "production",
   entry: path.resolve(BASE, "src/browser/index.ts"),
   output: {
-    path: path.resolve(BASE, "public"),
+    path: path.resolve(BASE, "src/server/public"),
     filename: "index.js",
   },
   devtool: "source-map",

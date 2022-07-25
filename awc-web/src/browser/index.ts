@@ -1,137 +1,54 @@
 const SPACE = "&nbsp;";
 
+// Originally inspired by  David Walsh (https://davidwalsh.name/javascript-debounce-function)
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// `wait` milliseconds.
+const debounce = (func, wait) => {
+  let timeout;
+
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
+
 class GraphQLValidator {
   private input: Lazy<HTMLTextAreaElement>;
   private output: Lazy<HTMLElement>;
+  private inputLines: Lazy<HTMLTextAreaElement>;
 
-  constructor(inputID: string, outputID: string) {
+  constructor(inputID: string, outputID: string, inputLinesID) {
     this.input = new Lazy(() => <HTMLTextAreaElement>document.getElementById(inputID));
+    this.inputLines = new Lazy(() => <HTMLTextAreaElement>document.getElementById(inputLinesID));
     this.output = new Lazy(() => <HTMLElement>document.getElementById(outputID));
   }
 
   async start() {
     await this.validate();
-    this.input.handle.addEventListener("keyup", async () => { await this.validate() });
+    this.input.handle.addEventListener("keyup", async () => { debounce(await this.validate(), 600) });
+    this.input.handle.addEventListener("scroll", async () => {
+      this.inputLines.handle.scrollTop = this.input.handle.scrollTop;
+      this.inputLines.handle.scrollLeft = this.input.handle.scrollLeft;
+    })
   }
 
   async validate() {
     const graphql = this.input.handle.value.toString();
-    const graphqlLines = graphql.split("\n");
+    const numLines = graphql.split("\n").length;
+    this.inputLines.handle.value = Array.from(Array(numLines).keys()).map((k) => { return k + 1; }).join("\n");
     const output = await fetch('/', {
       method: "POST",
       body: graphql
     });
     const json = await output.json();
-    let pretties: [string?] = [];
-    const diagnostics = json["diagnostics"];
-    if (diagnostics.length > 0) {
-      for (const diagnostic of diagnostics) {
-        // error | warning | advice
-        const severity = diagnostic["severity"];
-        let severityColor = "text-info";
-        let severityEmoji = "💡";
-        switch (severity) {
-          case "warning": {
-            severityColor = "text-warning"
-            severityEmoji = "⚠️";
-            break;
-          }
-          case "error": {
-            severityColor = "text-error"
-            severityEmoji = "❌";
-            break;
-          }
-        }
-  
-        // start building up the diagnostic div
-        let inner = `<div class="block">`;
-  
-        // apollo-compiler validation error
-        const code = diagnostic["code"];
-        inner += `<span class=${severityColor}>${code}</span>`
-  
-        // cannot find type `Result` in this document
-        const message = diagnostic["message"];
-        inner += `<br/><span class="text-content">${SPACE}${severityEmoji}${SPACE}${message}</span>`
-  
-        // now for the hard part,
-        // we are taking the offset and length
-        // and putting the diagnostic in the context
-        // of the source
-        const labels = diagnostic["labels"];
-        for (const l of labels) {
-          const labelSpan = l["span"];
-  
-          // 34
-          let labelOffset = labelSpan["offset"];
-
-          // 6
-          const labelLength = labelSpan["length"];
-
-          let lineIdx = 0;
-          let inline: [{maybeLineIdx: number, maybeHighlightSpace: string, maybeLine: string}?] = [];
-          let lastLine = false;
-          for (let graphqlLine of graphqlLines) {
-            let maybeHighlightSpace = "";
-            lineIdx += 1;
-            let maybeLine = ""
-            if (labelOffset > 0 || lastLine) {
-              maybeLine += `<br/><span class="secondary-content">${SPACE}${lineIdx}${SPACE}|</span><span class="primary-content">${SPACE}${SPACE}`;
-              for (let i = 0; i < graphqlLine.length; i++) {
-                maybeLine += graphqlLine.charAt(i)
-                labelOffset -= 1
-                if (labelOffset > -2) {
-                  maybeHighlightSpace += SPACE
-                }
-              }
-              maybeLine += "</span>"
-            }
-            inline.push({maybeLine, maybeLineIdx: lineIdx, maybeHighlightSpace});
-            if (labelOffset <= 0 && !lastLine) {
-              lastLine = true
-            } else if (lastLine) {
-              break
-            }
-          }
-
-          let realHighlightSpace = "";
-          for (const maybeInline of inline.slice(-4)) {
-            if (maybeInline) {
-              const { maybeLineIdx, maybeHighlightSpace, maybeLine } = maybeInline
-              inner += maybeLine
-              if (maybeLineIdx == lineIdx - 1) {
-                realHighlightSpace = maybeHighlightSpace
-                let highlight = ""
-                let labelSpace = ""
-                for (let i = 0; i < labelLength; i++) {
-                  highlight += "─"
-                  if (i < (labelLength / 2)) {
-                    labelSpace += SPACE
-                  }
-                }
-                inner += `<br/><span class="text-info">${SPACE}${SPACE}${SPACE}·${realHighlightSpace}${highlight}</span>`
-        
-                // not found in this scope
-                const label = l["label"];
-                inner += `<br/><span class="text-info">${SPACE}${SPACE}${SPACE}·${realHighlightSpace}${labelSpace}╰──${label}</span>`
-              }
-            }
-          }
-        }
-
-        const help = diagnostic["help"];
-        if (help) {
-          inner += `<br/>${SPACE}${SPACE}<span class="text-info">help:</span><span class="text-content">${SPACE}${help}</span>`
-        }
-
-        inner += "</div>"
-        pretties.push(inner);
-      }
-      this.output.handle.innerHTML = `${pretties.join("")}\n${json["message"]}`;
-    } else {
-      this.output.handle.innerHTML = `<code class="text-success center">${json["pretty"]}</span>`
-    }
-
+    this.output.handle.innerHTML = json["context"];
   }
 }
 
@@ -157,7 +74,7 @@ class Lazy<T> {
 }
 
 const load = async () => {
-  const validator = new GraphQLValidator("graphql", "diagnostics");
+  const validator = new GraphQLValidator("graphql", "diagnostics", "lines");
   validator.start();
 }
 
