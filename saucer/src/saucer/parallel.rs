@@ -1,4 +1,5 @@
 use crate::{Context, Logger, Result, Saucer, Timer};
+use std::fmt::Display;
 
 #[derive(Debug, Clone)]
 pub struct ParallelSaucer<F, S>
@@ -94,34 +95,36 @@ where
             (Ok(()), Ok(())) => Ok(()),
             (Err(e), Ok(())) => Err(e).with_context(|| {
                 format!(
-                    "{}{}❌ {} ({}) failed with 1 error in {}",
-                    self.prefix(),
+                    "{}{} failed in {}",
                     self.first.prefix(),
                     self.first.description(),
-                    self.description(),
                     elapsed
                 )
             }),
             (Ok(()), Err(e)) => Err(e).with_context(|| {
                 format!(
-                    "{}{}❌ {} ({}) failed with 1 error in {}",
-                    self.prefix(),
+                    "{}{} failed in {}",
                     self.second.prefix(),
                     self.second.description(),
-                    self.description(),
                     elapsed
                 )
             }),
-            (Err(first_err), Err(second_err)) => {
-                Err(first_err).context(second_err).context(format!(
-                    "{}{}{}❌ '{}' failed with 2 errors in {}",
-                    self.prefix(),
-                    self.first.prefix(),
-                    self.second.prefix(),
-                    self.description(),
-                    elapsed
-                ))
-            }
+            (Err(first_err), Err(second_err)) => Err(first_err)
+                .with_context(|| {
+                    parallel_error(self.first.prefix(), self.first.description(), &elapsed)
+                })
+                .context(second_err)
+                .with_context(|| {
+                    parallel_error(self.second.prefix(), self.second.description(), &elapsed)
+                }),
         }
     }
+}
+
+fn parallel_error(
+    prefix: impl Display,
+    description: impl Display,
+    elapsed: impl Display,
+) -> String {
+    format!("{}{} failed in {}", prefix, description, elapsed)
 }

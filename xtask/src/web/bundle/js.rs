@@ -15,7 +15,12 @@ impl JsCommand {
 impl Saucer for JsCommand {
     /// Transpiles TypeScript source to minified JavaScript
     fn beam(&self) -> Result<()> {
-        Process::new("npm", &["run", "build:js"]).run(EMOJI)
+        let process = Process::builder()
+            .bin("npm")
+            .args(&["run", "build:js"])
+            .build()?;
+        process.runner().prefix(EMOJI.to_string()).run()?;
+        Ok(())
     }
 
     fn prefix(&self) -> String {

@@ -10,7 +10,7 @@ pub(crate) struct BucketCommand {
 
 #[derive(Default, Debug, Clone, Parser)]
 pub(crate) struct BucketOpts {
-    #[clap(long, default_value_t = crate::relative_dir("awc-web/public"))]
+    #[clap(long, default_value_t = crate::relative_dir("awc-web/src/server/public"))]
     public_dir: Utf8PathBuf,
 
     #[clap(long, default_value_t = crate::relative_dir("awc-web/src/browser/bucket"))]

@@ -9,6 +9,9 @@ name = "awc"
 
 [dependencies]
 apollo-compiler = { git = "https://github.com/apollographql/apollo-rs", rev = "9136cf199540773603ec8810ca72f418c6a005e6" }
+buildstructor = "0.3"
 miette = "4.7.1"
+tracing = "0.1"
+saucer = { path = "../saucer" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

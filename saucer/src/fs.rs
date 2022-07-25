@@ -5,8 +5,8 @@ use crate::Logger;
 
 use std::fs;
 
-#[derive(Default, Copy, Clone)]
 /// Interact with a file system
+#[derive(Default, Copy, Clone)]
 pub struct Fs {}
 
 impl Fs {
@@ -144,6 +144,7 @@ impl Fs {
     {
         let in_dir = in_dir.as_ref();
         let out_dir = out_dir.as_ref();
+        Self::create_dir_all(out_dir, prefix)?;
         Logger::info(format!(
             "{}copying contents of {} to {}",
             prefix, in_dir, out_dir
@@ -160,7 +161,10 @@ impl Fs {
                                 prefix, &entry_path, &out_file
                             ));
                             fs::copy(&entry_path, &out_file).with_context(|| {
-                                format!("{}could not copy {} to {}", &prefix, &in_dir, &out_file)
+                                format!(
+                                    "{}could not copy {} to {}",
+                                    &prefix, &entry_path, &out_file
+                                )
                             })?;
                         }
                     } else if metadata.is_dir() {

@@ -55,14 +55,8 @@ RUN set -eux; \
 # layer that builds xtask
 FROM chef AS xtask-builder
 
-ENV VOLTA_VERSION="v1.0.8"
-ENV VOLTA_HOME="/volta"
-ENV PATH="$VOLTA_HOME/bin:$PATH"
-ENV IS_DOCKER=1
-
-COPY --from=volta-installer $VOLTA_HOME $VOLTA_HOME
-
 WORKDIR /app
+
 RUN set -eux; \
 		export DEBIAN_FRONTEND=noninteractive; \
 	  apt update; \
@@ -86,9 +80,22 @@ RUN set -eux; \
 		cargo build -p xtask --release; \
 		echo "Compiled 'xtask'!"
 
-FROM chef as awc-web-builder
+# layer that builds awc-web
+FROM chef AS awc-web-builder
 
 WORKDIR /app
+
+ENV VOLTA_VERSION="v1.0.8"
+ENV VOLTA_HOME="/volta"
+ENV PATH="$VOLTA_HOME/bin:$PATH"
+ENV IS_DOCKER=1
+
+COPY --from=volta-installer $VOLTA_HOME $VOLTA_HOME
+
+RUN set -eux; \
+		which node; \
+		which npm; \
+		echo "Installed node/npm!"
 
 COPY --from=web-planner /app/recipe.web.json ./recipe.web.json
 
@@ -101,7 +108,7 @@ COPY . .
 ENV AWC_ENV "production"
 
 RUN set -eux; \
-		./target/release/xtask web bundle all; \
+		./target/release/xtask web; \
 		echo "Built static assets!"
 
 RUN set -eux; \
@@ -109,8 +116,19 @@ RUN set -eux; \
 		echo "Compiled 'awc-web'!"
 
 ################################################################################
-FROM debian:11.3-slim
+# layer that runs our application
+FROM debian:11.3-slim AS awc-web
 
+WORKDIR /app
+RUN set -eux; \
+	mkdir -p ./awc-web/src/server/public
+
+COPY --from=awc-web-builder /app/target/release/awc-web ./awc-bin
+COPY --from=awc-web-builder /app/awc-web/src/server/public/favicon.ico ./awc-web/src/server/public
+COPY --from=awc-web-builder /app/awc-web/src/server/public/index.css ./awc-web/src/server/public
+COPY --from=awc-web-builder /app/awc-web/src/server/public/index.html ./awc-web/src/server/public
+COPY --from=awc-web-builder /app/awc-web/src/server/public/index.js ./awc-web/src/server/public
+COPY --from=awc-web-builder /app/awc-web/src/server/public/index.js.map ./awc-web/src/server/public
 
 RUN set -eux; \
 		export DEBIAN_FRONTEND=noninteractive; \
@@ -121,15 +139,6 @@ RUN set -eux; \
 		rm -rf /var/lib/{apt,dpkg,cache,log}/; \
 		echo "Installed base utils!"
 
-WORKDIR /app
-
-# keep the public directory in the same place so that relative paths
-# in awc.prod.json still look correct in source code
-RUN set -eux; \
-		mkdir ./awc-web
-
 CMD ["./awc-bin"]
 EXPOSE 8080
 
-COPY --from=awc-web-builder /app/target/release/awc-web ./awc-bin
-COPY --from=awc-web-builder /app/awc-web/public ./awc-web/public
