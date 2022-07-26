@@ -3,7 +3,10 @@ use camino::{ReadDirUtf8, Utf8Path};
 
 use crate::Logger;
 
-use std::fs;
+use std::{
+    fs::{self, File},
+    str,
+};
 
 /// Interact with a file system
 #[derive(Default, Copy, Clone)]
@@ -28,10 +31,10 @@ impl Fs {
                         Ok(contents)
                     }
                 } else {
-                    Err(anyhow!("'{}' is not a file", path))
+                    Err(anyhow!("{}'{}' is not a file", prefix, path))
                 }
             }
-            Err(e) => Err(anyhow!("Could not find '{}'", path).context(e)),
+            Err(e) => Err(anyhow!("{}could not find '{}'", prefix, path).context(e)),
         }
     }
 
@@ -42,6 +45,20 @@ impl Fs {
         C: AsRef<[u8]>,
     {
         let path = path.as_ref();
+        let contents = str::from_utf8(contents.as_ref()).with_context(|| {
+            format!(
+                "tried to write contents to {} that was invalid UTF-8",
+                &path
+            )
+        })?;
+        if !path.exists() {
+            File::create(&path)
+                .with_context(|| format!("{} does not exist and it could not be created", &path))?;
+        }
+        if !path.exists() {
+            File::create(&path)
+                .with_context(|| format!("{} does not exist and it could not be created", &path))?;
+        }
         Logger::info(format!("{}writing {} to disk", prefix, &path));
         fs::write(&path, contents)
             .with_context(|| format!("{}could not write {}", prefix, &path))?;
