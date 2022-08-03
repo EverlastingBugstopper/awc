@@ -1,4 +1,4 @@
-# awc
+# awc (apollo-web-compiler)
 
 This project runs [`apollo-compiler`](https://github.com/apollographql/apollo-rs) on GraphQL schemas as a service.
 
