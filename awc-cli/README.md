@@ -5,7 +5,7 @@ This is a little CLI that wraps [`apollo-compiler`](https://github.com/apollogra
 ## Usage
 
 ```console
-$ cargo run -p awc-cli -- lint --file ./schemas/prod.graphql
+$ cargo awc lint --schema ./schemas/prod.graphql
 apollo-compiler validation error
 
   × cannot find type `Resulttt` in this document

@@ -59,7 +59,7 @@ checksum = "bb07d2053ccdbe10e2af2995a2f116c1330396493dc1269f6a91d0ae82e19704"
 [[package]]
 name = "apollo-compiler"
 version = "0.1.0"
-source = "git+https://github.com/apollographql/apollo-rs?rev=9136cf199540773603ec8810ca72f418c6a005e6#9136cf199540773603ec8810ca72f418c6a005e6"
+source = "git+https://github.com/apollographql/apollo-rs?rev=e8bdaa900b9b0559ff91508d5b65c83ddc33375e#e8bdaa900b9b0559ff91508d5b65c83ddc33375e"
 dependencies = [
  "apollo-parser",
  "miette",
@@ -71,8 +71,8 @@ dependencies = [
 
 [[package]]
 name = "apollo-parser"
-version = "0.2.8"
-source = "git+https://github.com/apollographql/apollo-rs?rev=9136cf199540773603ec8810ca72f418c6a005e6#9136cf199540773603ec8810ca72f418c6a005e6"
+version = "0.2.9"
+source = "git+https://github.com/apollographql/apollo-rs?rev=e8bdaa900b9b0559ff91508d5b65c83ddc33375e#e8bdaa900b9b0559ff91508d5b65c83ddc33375e"
 dependencies = [
  "rowan",
 ]

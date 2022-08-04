@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/index.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <style>
+      #graphql,
+      #lines {
+        margin: 0;
+        border-radius: 0;
+        resize: none;
+        outline: none;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      #graphql {
+        padding-left: calc(2.5rem);
+        width: 100%;
+      }
+      #lines {
+        display: flex;
+        border-color: transparent;
+        overflow-y: hidden;
+        text-align: right;
+        box-shadow: none;
+        position: absolute;
+        width: 2rem;
+      }
+      #lines:focus-visible,
+      #graphql:focus-visible {
+        outline: none;
+      }
+    </style>
+    <noscript
+      >You need to enable JavaScript to run this app. You don't need to enable
+      it to use our API though! Try running `cat my-schema.graphql | curl -X
+      POST -sSL --data-binary @- http://localhost:8080` in a Unixy terminal.</noscript
+    >
+    <title>🦀 awc</title>
+  </head>
+  <body class="h-screen">
+    <div class="w-screen prose prose-a:underline m-3">
+      <h2 class="block relative">
+        <a class="code" href="/">awc</a>
+        wraps
+        <a
+          class="code"
+          href="https://github.com/apollographql/apollo-rs/tree/main/apollo-compiler"
+          >apollo-rs/apollo-compiler</a
+        >
+        for the web.
+      </h2>
+      <h3 class="block relative italic">edit the GraphQL below...</h3>
+    </div>
+    <div class="grid grid-cols-2 place-content-stretch min-h-[90%]">
+      <code class="mockup-code min-h-[80%] min-w-[80%] overflow-x-scroll m-3">
+        <textarea
+          class="textarea textarea-ghost text-neutral-content inline-block h-full"
+          title="GraphQL line numbers"
+          id="lines"
+          wrap="off"
+          readonly
+        ></textarea>
+        <textarea
+          class="textarea textarea-ghost inline-block min-w-[80%] h-full"
+          id="graphql"
+          type="text"
+          name="graphql"
+          title="GraphQL input"
+        >
+query {
+  cat {
+    name
+  }
+}
+
+query getPet {
+  cat {
+    owner {
+      name
+    }
+  }
+}
+
+query getPet {
+  cat {
+    treat
+  }
+}
+
+subscription sub {
+  newMessage {
+    body
+    sender
+  }
+  disallowedSecondRootField
+}
+
+type Query {
+  cat: Pet
+}
+
+type Subscription {
+  newMessage: Result
+}
+
+union Pet &#x3D; Cat | Dog</textarea
+        >
+      </code>
+      <div class="m-2 mockup-code min-h-[100%]">
+        <div
+          id="diagnostics"
+          class="leading-tight block whitespace-pre overflow-x-scroll pl-3 m-5"
+        ></div>
+      </div>
+    </div>
+  </body>
+  <script type="module" src="/index.js"></script>
+</html>

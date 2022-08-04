@@ -10,12 +10,21 @@ There are many ways to use `awc`. None of them are particularly stable.
 
 1) Install [rustup](https://rustup.rs)
 1) Get a [GraphQL Schema](./schemas/prod.graphql) and save it to `document.graphql`
+1) Clone this repo.
 1) Run the following:
 
 ```console
-$ cargo install --git https://github.com/EverlastingBugstopper/awc -p awc-cli
-$ awc-cli lint --file document.graphql
-apollo-compiler validation error\n\n  × cannot find type `Result` in this document\n   ╭─[2:1]\n 2 │ {\n 3 │   newMessage: Result\n   ·               ───┬──\n   ·                  ╰── not found in this scope\n 4 │ }\n   ╰────\n
+$ cargo awc lint --schema document.graphql
+apollo-compiler validation error
+
+  × cannot find type `Resulttt` in this document
+   ╭─[1:1]
+ 1 │ type Subscription {
+ 2 │   newMessage: Resulttt
+   ·               ────┬───
+   ·                   ╰── not found in this scope
+ 3 │ }
+   ╰────
 ```
 
 ### With `rover graph introspect`, `curl`, and `jq`
@@ -32,7 +41,6 @@ apollo-compiler validation advice
  2 | type Country {
  3 |   code: ID!
    `----
-
 ```
 
 ### In the browser _(under development)_

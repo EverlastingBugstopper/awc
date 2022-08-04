@@ -3,7 +3,7 @@ use buildstructor::buildstructor;
 use saucer::Timer;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use tracing::{debug, info};
+use tracing::info;
 
 use crate::{AwcDiagnostic, AwcDiagnosticSeverity, AwcRules};
 
@@ -18,9 +18,6 @@ pub struct AwcCompiler {
     /// Rules that govern [`ApolloCompiler::validate`]
     /// and the [`ApolloDiagnostic`]s  they emit
     rules: AwcRules,
-
-    /// The GraphQL document
-    graphql: String,
 }
 
 #[buildstructor]
@@ -34,7 +31,6 @@ impl AwcCompiler {
         fail_level: AwcDiagnosticSeverity,
     ) -> Self {
         Self {
-            graphql: input.to_string(),
             compiler: ApolloCompiler::new(&input),
             rules: AwcRules::builder()
                 .ignore_warnings(ignore_warnings)
