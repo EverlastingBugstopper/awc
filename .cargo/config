@@ -1,2 +1,4 @@
 [alias]
 xtask = "run --package xtask --"
+awc = "run --package awc-cli --"
+web = "run --package awc-web --"

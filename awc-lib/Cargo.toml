@@ -8,7 +8,7 @@ publish = false
 name = "awc"
 
 [dependencies]
-apollo-compiler = { git = "https://github.com/apollographql/apollo-rs", rev = "9136cf199540773603ec8810ca72f418c6a005e6" }
+apollo-compiler = { git = "https://github.com/apollographql/apollo-rs", rev = "e8bdaa900b9b0559ff91508d5b65c83ddc33375e" }
 buildstructor = "0.3"
 miette = "4.7.1"
 tracing = "0.1"
