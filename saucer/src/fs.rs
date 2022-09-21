@@ -170,7 +170,7 @@ impl Fs {
             if let Ok(entry) = entry {
                 let entry_path = entry.path();
                 if let Ok(metadata) = fs::metadata(&entry_path) {
-                    if metadata.is_file() && !entry_path.to_string().contains("README.md") {
+                    if metadata.is_file() {
                         if let Some(entry_name) = entry_path.file_name() {
                             let out_file = out_dir.join(entry_name);
                             Logger::info(format!(
