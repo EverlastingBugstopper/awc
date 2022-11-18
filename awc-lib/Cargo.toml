@@ -8,9 +8,9 @@ publish = false
 name = "awc"
 
 [dependencies]
-apollo-compiler = { git = "https://github.com/apollographql/apollo-rs", rev = "e8bdaa900b9b0559ff91508d5b65c83ddc33375e" }
-buildstructor = "0.3"
-miette = "4.7.1"
+apollo-compiler = "0.3"
+buildstructor = "0.5"
+miette = "4"
 tracing = "0.1"
 saucer = { path = "../saucer" }
 serde = { version = "1", features = ["derive"] }

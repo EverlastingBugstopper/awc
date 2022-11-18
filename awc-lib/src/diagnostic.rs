@@ -1,3 +1,9 @@
+#[cfg(doc)]
+use apollo_compiler::ApolloCompiler;
+
+#[cfg(doc)]
+use crate::AwcCompiler;
+
 use apollo_compiler::ApolloDiagnostic;
 use buildstructor::buildstructor;
 use miette::Severity;
@@ -82,7 +88,7 @@ impl From<&ApolloDiagnostic> for AwcDiagnostic {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
-/// The level at which `AwcCompiler::validate` will fail
+/// The level at which [`AwcCompiler::validate`] will fail
 pub enum AwcDiagnosticSeverity {
     /// An `error` diagnostic, something went wrong
     Error,
@@ -98,7 +104,7 @@ pub enum AwcDiagnosticSeverity {
 }
 
 impl AwcDiagnosticSeverity {
-    /// Enumerates the possible [`AwcDiagnosticKind`]s
+    /// Enumerates the possible [`AwcDiagnosticSeverity`]s
     pub fn possible_values() -> Vec<AwcDiagnosticSeverity> {
         vec![Self::Error, Self::Warning, Self::Advice, Self::Other]
     }
@@ -159,6 +165,7 @@ impl From<&ApolloDiagnostic> for AwcDiagnosticSeverity {
     }
 }
 
+/// Context for [`AwcDiagnostic`]s including line numbers and character offsets
 #[derive(Serialize, Deserialize)]
 pub struct AwcLabel {
     label: Option<String>,
@@ -196,6 +203,7 @@ impl AwcLabel {
     }
 }
 
+/// Line numbers and offsets for [`AwcLabel`]s
 #[derive(Serialize, Deserialize)]
 pub struct AwcSpan {
     length: Option<usize>,

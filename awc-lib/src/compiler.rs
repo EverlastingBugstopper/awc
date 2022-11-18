@@ -8,15 +8,16 @@ use tracing::info;
 use crate::{AwcDiagnostic, AwcDiagnosticSeverity, AwcRules};
 
 /// Struct that validates GraphQL documents
-/// Mostly just a wrapper around `ApolloCompiler`
+/// 
+/// Mostly just a wrapper around [`ApolloCompiler`]
 /// that makes it into a public API.
 /// It is not stable.
 pub struct AwcCompiler {
-    /// An `ApolloCompiler` to validate GraphQL documents
+    /// An [`ApolloCompiler`] to validate GraphQL documents
     compiler: ApolloCompiler,
 
-    /// Rules that govern [`ApolloCompiler::validate`]
-    /// and the [`ApolloDiagnostic`]s  they emit
+    /// Rules that govern [`AwcCompiler::validate`]
+    /// and the [`AwcDiagnostic`]s  they emit
     rules: AwcRules,
 }
 
@@ -40,7 +41,7 @@ impl AwcCompiler {
         }
     }
 
-    /// Consume the [`ApolloCompiler`] and produce an `AwcResult`
+    /// Consume the [`ApolloCompiler`] and produce an [`AwcResult`]
     /// based on the rules defined by [`AwcRules`]
     pub fn validate(&self) -> AwcResult {
         let mut error_count = 0;
